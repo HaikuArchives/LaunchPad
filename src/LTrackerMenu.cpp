@@ -99,7 +99,8 @@ LTrackerMenu::ScanFolder( void )
 //  minimum error checking. only returns NULL if entry_ref is not a folder.
 // ----------------------------------------------------------------------------
 BMenuItem*
-LTrackerMenu::BuildMenu( const entry_ref* ref, BMessage* message, BHandler* target )
+LTrackerMenu::BuildMenu( const entry_ref* ref, BMessage* message,
+						 BHandler* target )
 {
 	BNode		node;
 	BEntry		entry;
@@ -173,8 +174,11 @@ LTrackerMenuItem::InitObject( const entry_ref* ref )
 	// icon
 	if ( needIcon )
 	{
-		BNodeInfo::GetTrackerIcon( const_cast<entry_ref*>(ref), mMiniIcon,
-								   B_MINI_ICON );
+		// FIXME: if we use ref as given, GetTrackerIcon still gets me
+		// a broken-symlink icon even if it's not. So, grab a real entry_ref.
+		entry_ref realRef;
+		entry.GetRef( &realRef );
+		BNodeInfo::GetTrackerIcon( &realRef, mMiniIcon, B_MINI_ICON );
 	}
 }
 
