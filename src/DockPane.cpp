@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define DRAG_BITMAP	1
+#define DRAG_BITMAP	0
 
 const char kTrackerSig[] = "application/x-vnd.Be-TRAK";
 static void LaunchRef( entry_ref* ref );
@@ -351,22 +351,30 @@ DockPane::PopUpGo( BPoint p )
 	popUp.SetFont( be_plain_font );
 
 	// Item-specific pop-up menu items
-	if ( mDockItem->HasRef() ) {
-	if ( mDockItem->IsFolder() ) {
-		PopUpForFolder( &popUp );
-	} else {
-		PopUpForFile( &popUp );
-	}
+	if ( mDockItem->HasRef() )
+	{
+		if ( mDockItem->IsFolder() )
+		{
+			PopUpForFolder( &popUp );
+		}
+		else
+		{
+			PopUpForFile( &popUp );
+		}
 	}
 
 	// Common items
-	if ( mDockItem->HasRef() ) {
+	if ( mDockItem->HasRef() )
+	{
 		sprintf( label, "Remove %s", mDockItem->Caption() );
 		item = new BMenuItem( label, new BMessage( kMsgRemoveItem ) );
 		item->SetTarget( this, Window() );
 		popUp.AddItem( item );
-	} else {
-		item = new BMenuItem( "Remove this pane", new BMessage( kMsgRemovePane ) );
+	}
+	else
+	{
+		item = new BMenuItem( "Remove this pane",
+							  new BMessage( kMsgRemovePane ) );
 		item->SetTarget( this, Window() );
 		popUp.AddItem( item );
 	}
