@@ -1,6 +1,4 @@
 // $Id$
-// DockPane.h
-//
 #ifndef _DOCK_PANE_H
 #define _DOCK_PANE_H
 
@@ -67,6 +65,8 @@ private:
 	void				PopUpGo( BPoint p );
 	void				PopUpForFolder( BPopUpMenu *popUp );
 	void				PopUpForFile( BPopUpMenu *popUp );
+	void				StartMouseWatchDog( BPoint p );
+	void				StopMouseWatchDog( void );
 
 	DockItem*			mDockItem;
 	rgb_color			mBgColor;
@@ -77,12 +77,11 @@ private:
 	int64				mLastTimeClicked;
 	BRect				mBitmapRect;
 	uint32				mPaneAppearance;
-	BPopUpMenu*			mPopUpOnBitmap;
-	BPopUpMenu*			mPopUpOnPaneArea;
 	static bool			mEnableSingleClick;
 	bool				mTracking;
 	BPoint				mHotSpot;
 	int32				mClicks;
+	BMessageRunner*		mMouseWatchDog;
 };
 
 // vi: set ts=4:

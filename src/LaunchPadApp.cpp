@@ -9,6 +9,9 @@
 #include <be/app/Roster.h>
 #include <stdio.h>
 
+const char LAUNCH_PAD_SIGNATURE[] = "application/x-vnd.HK-LaunchPad";
+const char LAUNCH_PAD_SIGNATURE_MINOR[] = "x-vnd.HK-LaunchPad";
+
 LaunchPadApp::LaunchPadApp()
 :	BApplication( LAUNCH_PAD_SIGNATURE ),
 	mPreference( new BMessage( kMsgSettings ) )

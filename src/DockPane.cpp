@@ -1,6 +1,4 @@
 // $Id$
-// DockPane.cpp
-//
 
 #include "DockPane.h"
 #include "colors.h"
@@ -12,6 +10,7 @@
 #include <be/interface/PopUpMenu.h>
 #include <be/interface/MenuItem.h>
 #include <be/app/Roster.h>
+#include <be/app/MessageRunner.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -25,7 +24,8 @@ DockPane::DockPane( BPoint p, uint32 paneAppearance )
 				"DockPane", "Label",
 				new BMessage( kMsgFromDockPane ),
 				B_FOLLOW_NONE, B_WILL_DRAW ),
-	mLastTimeClicked( 0 )
+	mLastTimeClicked( 0 ),
+	mMouseWatchDog( NULL )
 {
 	SetPaneAppearance( paneAppearance );
 	InitObject();
@@ -40,6 +40,7 @@ DockPane::DockPane( BMessage *archive )
 
 DockPane::~DockPane()
 {
+	delete mMouseWatchDog;
 	delete mDockItem;
 }
 
@@ -78,36 +79,47 @@ DockPane::Draw( BRect r )
 	SetLowColor( mBgColor );
 	MovePenTo( mBitmapRect.LeftTop() );
 	SetDrawingMode( B_OP_OVER );
-	switch ( PaneAppearance() ) {
-	case kLargeIconWithCaption:
-	case kLargeIconWithoutCaption:
-		if ( mDockItem->HasRef() ) {
-			if ( mBitmapHighlight )
-				DrawBitmap( mDockItem->LargeIconHi() );
-			else
-				DrawBitmap( mDockItem->LargeIcon() );
-		}
-		break;
-	case kMiniIconWithCaption:
-	case kMiniIconWithoutCaption:
-		if ( mDockItem->HasRef() ) {
-			if ( mBitmapHighlight )
-				DrawBitmap( mDockItem->SmallIconHi() );
-			else
-				DrawBitmap( mDockItem->SmallIcon() );
-		}
-		break;
+
+	switch ( PaneAppearance() )
+	{
+		case kLargeIconWithCaption:
+		case kLargeIconWithoutCaption:
+			if ( mDockItem->HasRef() )
+			{
+				if ( mBitmapHighlight )
+					DrawBitmap( mDockItem->LargeIconHi() );
+				else
+					DrawBitmap( mDockItem->LargeIcon() );
+			}
+			break;
+		case kMiniIconWithCaption:
+		case kMiniIconWithoutCaption:
+			if ( mDockItem->HasRef() )
+			{
+				if ( mBitmapHighlight )
+					DrawBitmap( mDockItem->SmallIconHi() );
+				else
+					DrawBitmap( mDockItem->SmallIcon() );
+			}
+			break;
+		default:
+			break;
 	}
+
 	SetDrawingMode( B_OP_COPY );
 	if ( PaneAppearance() != kLargeIconWithoutCaption &&
-			PaneAppearance() != kMiniIconWithoutCaption ) {
+		 PaneAppearance() != kMiniIconWithoutCaption )
+	{
 		MovePenTo( 0, 50 );
 		DrawString( mDockItem->Caption() );
 	}
-	if ( mPaneHighlight ) {
+	if ( mPaneHighlight )
+	{
 		SetHighColor( blue );
 		StrokeRect( Bounds() );
-	} else {
+	}
+	else
+	{
 		SetHighColor( mdGray );
 		MovePenTo( Bounds().LeftBottom() );
 		StrokeLine( Bounds().RightBottom() );
@@ -121,27 +133,28 @@ DockPane::Draw( BRect r )
 void
 DockPane::GetPreferredSize( float *w, float *h )
 {
-	switch ( PaneAppearance() ) {
-	case kLargeIconWithCaption:
-		*w = 70;
-		*h = 60;
-		break;
-	case kLargeIconWithoutCaption:
-		*w = 32+2*kBitmapPaddingL;
-		*h = 32+2*kBitmapPaddingL;
-		break;
-	case kMiniIconWithCaption:
-		*w = 70;
-		*h = 30;
-		break;
-	case kMiniIconWithoutCaption:
-		*w = 16+2*kBitmapPaddingS;
-		*h = 16+2*kBitmapPaddingS;
-		break;
-	default:
-		*w = 70;
-		*h = 60;
-		break;
+	switch ( PaneAppearance() )
+	{
+		case kLargeIconWithCaption:
+			*w = 70;
+			*h = 60;
+			break;
+		case kLargeIconWithoutCaption:
+			*w = 32+2*kBitmapPaddingL;
+			*h = 32+2*kBitmapPaddingL;
+			break;
+		case kMiniIconWithCaption:
+			*w = 70;
+			*h = 30;
+			break;
+		case kMiniIconWithoutCaption:
+			*w = 16+2*kBitmapPaddingS;
+			*h = 16+2*kBitmapPaddingS;
+			break;
+		default:
+			*w = 70;
+			*h = 60;
+			break;
 	}
 
 	// Because width and height actually cover (width+1) and (height+1) pixels.
@@ -157,61 +170,67 @@ DockPane::MessageReceived( BMessage *m )
 	entry_ref	ref;
 	BWindow*	window;
 
-	switch ( m->what ) {
-	case kMsgDraggedFromDockPane:
-	case B_SIMPLE_DATA:
+	switch ( m->what )
 	{
-		DockPane*	source;
-		if ( m->what == B_SIMPLE_DATA )
-		{	// uh.. butt ugly.
-			m->FindRef( "refs", &droppedRef );
-		}
-		else
+		case kMsgDraggedFromDockPane:
+		case B_SIMPLE_DATA:
 		{
-			m->FindRef( "Refs", &droppedRef );	// probably not used any more.
-		}
-		// Dropped onto the bitmap? (then launch it)
-		if ( WillAccept() )
-		{
-			Launch( m );
+			DockPane*	source;
+			if ( m->what == B_SIMPLE_DATA )
+			{	// uh.. butt ugly.
+				m->FindRef( "refs", &droppedRef );
+			}
+			else
+			{
+				m->FindRef( "Refs", &droppedRef );	// probably not used any more.
+			}
+			// Dropped onto the bitmap? (then launch it)
+			if ( WillAccept() )
+			{
+				Launch( m );
+				break;
+			}
+			// Dragged from other pane?
+			if ( m->FindPointer( "SourcePad", (void**)&window ) == B_OK )
+			{
+				if ( window == Window() &&
+					 m->FindPointer( "SourceDockPane", (void**)&source ) == B_OK )
+				{
+					source->DroppedToOtherPane();
+				}
+			}
+			// Set new item
+			mDockItem->SetTo( &droppedRef );
+			mPaneHighlight = false;
+			Invalidate();
 			break;
 		}
-		// Dragged from other pane?
-		if ( m->FindPointer( "SourcePad", (void**)&window ) == B_OK )
-		{
-			if ( window == Window() &&
-				 m->FindPointer( "SourceDockPane", (void**)&source ) == B_OK )
-			{
-				source->DroppedToOtherPane();
-			}
-		}
-		// Set new item
-		mDockItem->SetTo( &droppedRef );
-		mPaneHighlight = false;
-		Invalidate();
-		break;
-	}
-	case kMsgRemoveItem:
-		ClearDockPane();
-		break;
-	case kMsgLaunchItem:
-		Launch();
-		break;
-	case kMsgLaunchRef:
-		m->FindRef( "refs", &ref );
-		LaunchRef( &ref );
-		break;
-	case kMsgRemovePane:	// remove myself!
-		m->AddPointer( "SourceDockPane", this );
-		Invoke( m );
-		break;
-	case kMsgInsertPaneAt:	// insert pane after myself.
-		m->AddPointer( "SourceDockPane", this );
-		Invoke( m );
-		break;
-	default:
-		BView::MessageReceived( m );
-		break;
+		case kMsgRemoveItem:
+			ClearDockPane();
+			break;
+		case kMsgLaunchItem:
+			Launch();
+			break;
+		case kMsgLaunchRef:
+			m->FindRef( "refs", &ref );
+			LaunchRef( &ref );
+			break;
+		case kMsgRemovePane:	// remove myself!
+			m->AddPointer( "SourceDockPane", this );
+			Invoke( m );
+			break;
+		case kMsgInsertPaneAt:	// insert pane after myself.
+			m->AddPointer( "SourceDockPane", this );
+			Invoke( m );
+			break;
+		case kMsgMouseWatchDog:
+			PRINT(( "PopUp by primary button?\n" ));
+			StopMouseWatchDog();
+			PopUpGo( m->FindPoint( "where" ) );
+			break;
+		default:
+			BView::MessageReceived( m );
+			break;
 	}
 }
 
@@ -232,17 +251,16 @@ DockPane::MouseDown( BPoint p )
 
 	switch ( buttons )
 	{
-	case B_PRIMARY_MOUSE_BUTTON:
-		mClicks = m->FindInt32( "clicks" );
-		break;
-	case B_SECONDARY_MOUSE_BUTTON:
-		PopUpGo( p );
-		break;
-	default:
-		break;
+		case B_PRIMARY_MOUSE_BUTTON:
+			mClicks = m->FindInt32( "clicks" );
+			StartMouseWatchDog( p );
+			break;
+		case B_SECONDARY_MOUSE_BUTTON:
+			PopUpGo( p );
+			break;
+		default:
+			break;
 	}
-
-    return;
 }
 
 void
@@ -251,6 +269,8 @@ DockPane::MouseMoved( BPoint p, uint32 code, const BMessage *m )
 	bool bitmapHighlightOld = mBitmapHighlight;
 	bool paneHighlightOld = mPaneHighlight;
 	DockPane *sourcePane;
+
+	StopMouseWatchDog();
 
 	if ( m == NULL )
 	{
@@ -280,35 +300,35 @@ DockPane::MouseMoved( BPoint p, uint32 code, const BMessage *m )
 
 	switch ( code )
 	{
-	case B_ENTERED_VIEW:
-	case B_INSIDE_VIEW:
-		if ( m == NULL )
-		{
+		case B_ENTERED_VIEW:
+		case B_INSIDE_VIEW:
+			if ( m == NULL )
+			{
+				break;
+			}
+			mPaneHighlight = true;
+			if ( m->FindPointer( "SourceDockPane", (void**)&sourcePane )
+				 == B_OK && sourcePane == this )
+			{
+				SetWillAccept( false );
+				break;
+			}
+			if ( mDockItem->HasRef() )
+			{
+				SetWillAccept( true );
+			}
+			else
+			{
+				SetWillAccept( false );
+			}
 			break;
-		}
-		mPaneHighlight = true;
-		if ( m->FindPointer( "SourceDockPane", (void**)&sourcePane ) == B_OK &&
-			 sourcePane == this )
-		{
-			SetWillAccept( false );
+		case B_EXITED_VIEW:
+			if ( !mPaneHighlight && !mBitmapHighlight ) break;
+			mPaneHighlight = false;
+			mBitmapHighlight = false;
 			break;
-		}
-		if ( mDockItem->HasRef() )
-		{
-			SetWillAccept( true );
-		}
-		else
-		{
-			SetWillAccept( false );
-		}
-		break;
-	case B_EXITED_VIEW:
-		if ( !mPaneHighlight && !mBitmapHighlight ) break;
-		mPaneHighlight = false;
-		mBitmapHighlight = false;
-		break;
-	default:
-		break;
+		default:
+			break;
 	}
 
 	if ( mBitmapHighlight != bitmapHighlightOld ||
@@ -321,7 +341,7 @@ DockPane::MouseMoved( BPoint p, uint32 code, const BMessage *m )
 void
 DockPane::MouseUp( BPoint p )
 {
-	BMessage *m = Window()->CurrentMessage();
+	BMessage* m = Window()->CurrentMessage();
 
 	uint32 buttons = m->FindInt32( "buttons" );
 
@@ -339,6 +359,35 @@ DockPane::MouseUp( BPoint p )
 
 	HighlightBitmap( false );
 	mTracking = false;
+
+	StopMouseWatchDog();
+}
+
+void
+DockPane::StartMouseWatchDog( BPoint p )
+{
+	if ( mMouseWatchDog )
+	{
+		delete mMouseWatchDog;
+	}
+
+	bigtime_t interval;
+	get_click_speed( &interval );
+	BMessage* msg = new BMessage( kMsgMouseWatchDog );
+	msg->AddPoint( "where", p );
+	mMouseWatchDog = new BMessageRunner( BMessenger( this, Window() ),
+										 msg, interval * 2, 1 );
+	if ( mMouseWatchDog->InitCheck() < B_OK )
+	{
+		StopMouseWatchDog();
+	}
+}
+
+void
+DockPane::StopMouseWatchDog( void )
+{
+	delete mMouseWatchDog;
+	mMouseWatchDog = NULL;
 }
 
 void
@@ -620,15 +669,19 @@ DockPane::Icon( void )
 void LaunchRef( entry_ref* ref )
 {
 	BNode	node( ref );
-	if ( node.IsDirectory() ) {
+	if ( node.IsDirectory() )
+	{
 		status_t err;
 		BMessenger *tracker = new BMessenger( kTrackerSig, -1, &err );
-		if ( err == B_NO_ERROR ) {
+		if ( err == B_NO_ERROR )
+		{
 			BMessage* m = new BMessage( B_REFS_RECEIVED );
 			m->AddRef( "refs", ref );
 			tracker->SendMessage( m );
 		}
-	} else {
+	}
+	else
+	{
 		be_roster->Launch( ref );
 	}
 }

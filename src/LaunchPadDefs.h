@@ -1,37 +1,42 @@
-//
-// LaunchPadDefs.h
-//
+// $Id$
 #ifndef _LAUNCH_PAD_DEFS_H
 #define _LAUNCH_PAD_DEFS_H
 
-#include <Debug.h>
-#include <SupportDefs.h>
-#include <AppFileInfo.h>
+#include <be/support/Debug.h>
+#include <be/support/SupportDefs.h>
+#include <be/storage/AppFileInfo.h>
 
-const char LAUNCH_PAD_SIGNATURE[] = "application/x-vnd.HK-LaunchPad";
-const char LAUNCH_PAD_SIGNATURE_MINOR[] = "x-vnd.HK-LaunchPad";
+extern const char LAUNCH_PAD_SIGNATURE[];
+extern const char LAUNCH_PAD_SIGNATURE_MINOR[];
 
-const uint32	kMsgCreateNewPad		= 'CtNP';
-const uint32	kMsgRemoveItem			= 'RmvI';
-const uint32	kMsgRemovePane			= 'RmvP';
-const uint32	kMsgInsertPaneAt		= 'InsP';
-const uint32	kMsgLaunchItem			= 'LncI';
-const uint32	kMsgLaunchRef			= 'LncR';
-const uint32	kMsgChangeDisplayMode	= 'ChPa';
-const uint32	kMsgChangePaneLayout	= 'ChPl';
-const uint32	kMsgDraggedFromDockPane	= 'DgFP';
-const uint32	kMsgFromDockPane		= 'MgFP';
-const uint32	kMsgSaveSettings		= 'SvSt';
-const uint32	kMsgWindowClosed		= 'WClD';
+enum {
+	kMsgCreateNewPad		= 'CtNP',
+	kMsgRemoveItem			= 'RmvI',
+	kMsgRemovePane			= 'RmvP',
+	kMsgInsertPaneAt		= 'InsP',
+	kMsgLaunchItem			= 'LncI',
+	kMsgLaunchRef			= 'LncR',
+	kMsgChangeDisplayMode	= 'ChPa',
+	kMsgChangePaneLayout	= 'ChPl',
+	kMsgDraggedFromDockPane	= 'DgFP',
+	kMsgFromDockPane		= 'MgFP',
+	kMsgSaveSettings		= 'SvSt',
+	kMsgWindowClosed		= 'WClD',
+	kMsgMouseWatchDog		= 'MsWd',
+};
 
 // Settings stored as BMessages
-const uint32	kMsgSettings			= 'LPSt';
-const uint32	kMsgPadSetting			= 'PdSt';
-const uint32	kMsgPaneSetting			= 'PnSt';
+enum {
+	kMsgSettings			= 'LPSt',
+	kMsgPadSetting			= 'PdSt',
+	kMsgPaneSetting			= 'PnSt',
+};
 
 // Type of the pane content
-const uint32	kPaneTypeEntryRef		= 'EtRf';
-const uint32	kPaneTypeEmpty			= (uint32)NULL;
+enum {
+	kPaneTypeEntryRef		= 'EtRf',
+	kPaneTypeEmpty			= (uint32)NULL,
+};
 
 // Pane appearance
 enum PaneAppearance {
