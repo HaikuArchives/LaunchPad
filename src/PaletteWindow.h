@@ -7,6 +7,7 @@
 #include <be/interface/View.h>
 #include <be/interface/Bitmap.h>
 #include <be/interface/Control.h>
+#include <be/interface/Screen.h>
 
 enum {
 	kMsgWindowTabDoubleClicked	= 'WTDC',
@@ -58,15 +59,18 @@ public:
 
 private:
 	void				InitObject( void );
-	static int32		_DragEntry( void *arg );
-	int32				DragWindow( void );
 	void				DoubleClicked( BPoint p );
+	void				SnapWindowPosition( BPoint* p );
 
 	uint32				mOrientation;
 	BView*				mTargetView;
 	CloseButton*		mCloseButton;
 	BPoint				mHotSpot;
 	bool				mIsTracking;
+
+	// cached values for window position snapping.
+	BRect				mScreenFrame;
+	BRect				mWindowFrame;
 };
 
 class PaletteWindow : public BWindow
