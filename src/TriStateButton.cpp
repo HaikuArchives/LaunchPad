@@ -2,11 +2,11 @@
 
 #include <assert.h>
 #define DEBUG 1
-#include <be/support/Debug.h>
 #include <be/interface/Bitmap.h>
 #include "TriStateButton.h"
 
 #if DEBUG
+#include <be/support/Debug.h>
 #include <string.h>
 #define REPORT_ERROR(a) fprintf( stderr, "ERROR: %s at line %d : %s\n", __FILE__, __LINE__, strerror(a) )
 #else
@@ -51,6 +51,7 @@ TriStateButton::~TriStateButton()
 void
 TriStateButton::AttachedToWindow( void )
 {
+	SetViewColor( B_TRANSPARENT_COLOR );
 }
 
 void
