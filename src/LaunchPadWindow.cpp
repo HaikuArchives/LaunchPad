@@ -1,15 +1,12 @@
 // $Id$
-// LaunchPadWindow.cpp
-//
 
 #include "LaunchPadWindow.h"
 #include "PaletteWindow.h"
 #include "LaunchPadDefs.h"
 #include "PrefHandler.h"
-#include <StorageKit.h>
-#include <Path.h>
-#include <Alert.h>
-#include <Screen.h>
+#include <be/storage/Path.h>
+#include <be/interface/Alert.h>
+#include <be/interface/Screen.h>
 
 LaunchPadWindow::LaunchPadWindow(	BRect		frame,
 									const char*	name,
@@ -211,3 +208,5 @@ LaunchPadWindow::GetSetting( BMessage* padSetting )
 		return B_ERROR;
 	}
 }
+
+// vi: set ts=4:
