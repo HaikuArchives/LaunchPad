@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wno-multichar -Wno-ctor-dtor-privacy
 INCLUDES = -I$(topsrcdir)/config
 CXXCOMPILE = $(CXX) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES)
 
-OBJS = src/Main.o src/LaunchPadApp.o src/LaunchPadWindow.o
+OBJS = src/Main.o src/LaunchPadApp.o src/LaunchPadWindow.o src/WindowDragger.o src/WindowTab.o src/TriStateButton.o
 
 all:	LaunchPad
 
