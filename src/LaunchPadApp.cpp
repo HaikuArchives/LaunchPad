@@ -27,13 +27,16 @@ LaunchPadApp::AboutRequested( void )
 	::GetAppVersion( &version );
 
 	char	versionStr[32];
-	if ( version.internal > 0 ) {
+	if ( version.internal > 0 )
+	{
 		sprintf( versionStr,	"%d.%d.%dd%d",
 								version.major,
 								version.middle,
 								version.minor,
 								version.internal );
-	} else {
+	}
+	else
+	{
 		sprintf( versionStr,	"%d.%d.%d",
 								version.major,
 								version.middle,
@@ -61,18 +64,23 @@ LaunchPadApp::ReadyToRun( void )
 
 	// Run window
 	int		numberOfPads = mPref->Settings()->FindInt32( "NumberOfPads" );
-	if ( numberOfPads < 1 ) {
+	if ( numberOfPads < 1 )
+	{
 		CreateNewPad();
 	}
-	for ( int i = 0; i < numberOfPads; i++ ) {
+	for ( int i = 0; i < numberOfPads; i++ )
+	{
 		BMessage	padSetting;
 		mPref->Settings()->FindMessage( "PadSetting", i, &padSetting );
 
 		LaunchPadWindow*	launchPadWindow;
 		uint32				tabOrientation;
-		if ( padSetting.FindInt32( "PaneLayout" ) == B_ITEMS_IN_COLUMN ) {
+		if ( padSetting.FindInt32( "PaneLayout" ) == B_ITEMS_IN_COLUMN )
+		{
 			tabOrientation = B_VERTICAL;
-		} else {
+		}
+		else
+		{
 			tabOrientation = B_HORIZONTAL;
 		}
 		char	name[30];
@@ -88,22 +96,21 @@ LaunchPadApp::ReadyToRun( void )
 void
 LaunchPadApp::MessageReceived( BMessage* message )
 {
-	BMessage*	padSetting;
-
-	switch ( message->what ) {
-	case kMsgCreateNewPad:
-		CreateNewPad();
-		break;
-	case kMsgSaveSettings:
-		padSetting = new BMessage;
-		message->FindMessage( "PadSetting", padSetting );
-		SaveSettings( padSetting, false );
-		delete padSetting;
-//		SaveSettings( message, false );
-		break;
-	default:
-		BApplication::MessageReceived( message );
-		break;
+	switch ( message->what )
+	{
+		case kMsgCreateNewPad:
+			CreateNewPad();
+			break;
+		case kMsgSaveSettings:
+		{
+			BMessage padSetting;
+			message->FindMessage( "PadSetting", &padSetting );
+			SaveSettings( &padSetting, false );
+			break;
+		}
+		default:
+			BApplication::MessageReceived( message );
+			break;
 	}
 }
 
@@ -116,13 +123,16 @@ bool
 LaunchPadApp::QuitRequested( void )
 {
 	// Summon all the windows to check if the settings need to be saved.
-	for ( int i = 0; i < CountWindows(); i++ ) {
+	for ( int i = 0; i < CountWindows(); i++ )
+	{
 		LaunchPadWindow*	pad = dynamic_cast<LaunchPadWindow*>(WindowAt(i));
-		if ( pad != NULL && pad->SaveNeeded() ) {
+		if ( pad != NULL && pad->SaveNeeded() )
+		{
 			PRINT(( "Saving settings for %s\n", pad->Name() ));
 			BMessage	padSetting( kMsgPadSetting );
 			pad->GetSetting( &padSetting );
-			SaveSettings( &padSetting, false );	// writing to file is done after this loop.
+			SaveSettings( &padSetting, false );
+			// writing to file is done after this loop.
 		}
 	}
 
@@ -147,7 +157,8 @@ LaunchPadApp::CreateNewPad( void )
 
 	padSetting.AddRect( "Frame", BRect( 100, 100, 100, 100 ) );
 	padSetting.AddInt32( "NumberOfPanes", kDefaultNumberOfPanes );
-	for ( int i = 0; i < kDefaultNumberOfPanes; i++ ) {
+	for ( int i = 0; i < kDefaultNumberOfPanes; i++ )
+	{
 		BMessage	paneSetting( kMsgPaneSetting );
 		paneSetting.AddInt32( "PaneContentType", kPaneTypeEmpty );
 		padSetting.AddMessage( "PaneSetting", &paneSetting );
@@ -159,51 +170,45 @@ LaunchPadApp::CreateNewPad( void )
 	launchPadWindow = new LaunchPadWindow(	padSetting.FindRect( "Frame" ),
 											"LaunchPadWindow",
 											padSetting.FindInt32( "PaneLayout" ),
-											&padSetting							 );
+											&padSetting );
 	launchPadWindow->Show();
 }
 
 status_t
 LaunchPadApp::SaveSettings( BMessage* padSetting, bool forceWrite )
 {
-/*
-	Lock();
-
-	BMessage	settings( kMsgSettings );
-	settings.AddInt32( "NumberOfPads", CountWindows() );
-
-	for ( int i = 0; i < CountWindows(); i++ ) {
-		BMessage	padSetting( kMsgPadSetting );
-		LaunchPadWindow*	window = (LaunchPadWindow*)WindowAt(i);
-		window->GetSetting( &padSetting );
-		settings.AddMessage( "PadSetting", &padSetting );
-	}
-
-	mPref->Save( &settings );
-
-	Unlock();
-*/
-	if ( Lock() ) {
-		if ( padSetting != NULL ) {
+	if ( Lock() )
+	{
+		if ( padSetting != NULL )
+		{
 			mPreference->AddMessage( "PadSetting", padSetting );
 		}
-		if ( forceWrite ) {
+		if ( forceWrite )
+		{
 			int32		padCount = 0;
 			type_code	typeCode;
-			if ( mPreference->GetInfo( "PadSetting", &typeCode, &padCount ) == B_NO_ERROR ) {
+			if ( mPreference->GetInfo( "PadSetting", &typeCode, &padCount ) ==
+				 B_NO_ERROR )
+			{
 				mPreference->AddInt32( "NumberOfPads", padCount );
 #if DEBUG
 				PRINT(( "Saving preference:\n" ));
 				mPreference->PrintToStream();
 #endif
 				mPref->Save( mPreference );
-			} else {	// no pad to save, but to override the previously-saved setting just save empty setting.
+			}
+			else
+			{
+				// no pad to save, but to override the previously-saved setting
+				// just save empty setting.
 				mPref->Save( mPreference );
 			}
 		}
 		Unlock();
 		return B_NO_ERROR;
-	} else {
+	}
+	else
+	{
 		BAlert*	errorDialog = new BAlert(	"",
 											"Couldn't lock window",
 											"", "", "Continue",
