@@ -28,11 +28,22 @@ depend-recursive:
 		(cd $$subdir && make depend); \
 	done
 
+# not working yet
 dist:	all
+	DISTDIR=LaunchPad-src-$(VERSION_STRING); \
+	rm -rf $$DISTDIR; \
+	mkdir $$DISTDIR; \
+	(mkdir $$DISTDIR/src; cd src; DISTDIR=$$DISTDIR/src make dist); \
+	zip -r $$DISTDIR.zip $$DISTDIR/; \
+	rm -rf $$DISTDIR
+
+bin-dist:	all
 	DISTDIR=LaunchPad-$(VERSION_STRING); \
 	rm -rf $$DISTDIR; \
 	mkdir $$DISTDIR; \
-	(cd src; DISTDIR=$$DISTDIR make dist); \
+	for i in README AUTHORS src/LaunchPad; do \
+		cp $$i $$DISTDIR; mimeset -f $$DISTDIR/$$i; \
+	done; \
 	zip -r $$DISTDIR.zip $$DISTDIR/; \
 	rm -rf $$DISTDIR
 
