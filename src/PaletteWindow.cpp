@@ -208,6 +208,9 @@ WindowTab::MouseDown( BPoint p )
 		}
 		else
 		{
+			BScreen screen;
+			mScreenFrame = screen.Frame();
+			mWindowFrame = Window()->Frame();
 			SetMouseEventMask( B_POINTER_EVENTS, B_NO_POINTER_HISTORY );
 			ConvertToScreen( &p );
 			mHotSpot = p - Window()->Frame().LeftTop();
@@ -224,9 +227,10 @@ WindowTab::MouseMoved( BPoint p, uint32 transit, const BMessage* message )
 	// Compute the new top-left corner of the window.
 	BPoint ps = ConvertToScreen( p );
 	ps -= mHotSpot;
+	SnapWindowPosition( &ps );
 	Window()->MoveTo( ps );
 
-	// This Sync is very important, otherwise the above BWindow::MoveTo don't
+	// This Sync is very important, otherwise the above BWindow::MoveTo doesn't
 	// get sent to app_server and executed right away, causing the subsequent
 	// BView::ConvertToScreen to use the wrong value for the window's framerect.
 	Sync();
@@ -243,6 +247,31 @@ void
 WindowTab::DoubleClicked( BPoint )
 {
 	Window()->Minimize( true );
+}
+
+void
+WindowTab::SnapWindowPosition( BPoint* p )
+{
+	const float SNAP_THRESHOLD = 10.0;
+
+	if ( fabsf( mScreenFrame.left - p->x ) < SNAP_THRESHOLD )
+	{
+		p->x = mScreenFrame.left;
+	}
+	if ( fabsf( mScreenFrame.right - ( p->x + mWindowFrame.Width() ) )
+		 < SNAP_THRESHOLD )
+	{
+		p->x = mScreenFrame.right - mWindowFrame.Width();
+	}
+	if ( fabsf( mScreenFrame.top - p->y ) < SNAP_THRESHOLD )
+	{
+		p->y = mScreenFrame.top;
+	}
+	if ( fabsf( mScreenFrame.bottom - ( p->y + mWindowFrame.Height() ) )
+		 < SNAP_THRESHOLD )
+	{
+		p->y = mScreenFrame.bottom - mWindowFrame.Height();
+	}
 }
 
 void
