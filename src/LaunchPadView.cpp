@@ -4,8 +4,8 @@
 
 #include "LaunchPadView.h"
 #include "PaletteWindow.h"
-#include <MenuItem.h>
-#include <Debug.h>
+#include <be/interface/MenuItem.h>
+#include <be/support/Debug.h>
 
 LaunchPadView::LaunchPadView(	BRect		frame,
 								const char*	name,
@@ -63,52 +63,63 @@ void
 LaunchPadView::AttachedToWindow( void )
 {
 	SetViewColor( B_TRANSPARENT_32_BIT );
-	for ( int i = 0; i < mDockHolder->CountChildren(); i++ ) {
-		((DockPane*)(mDockHolder->ChildAt(i)))->SetTarget( this, Window() );
+	for ( int i = 0; i < mDockHolder->CountChildren(); i++ )
+	{
+		static_cast<DockPane*>(mDockHolder->ChildAt(i))->
+			SetTarget( this, Window() );
 	}
 	Refresh();
 
-	BView::AttachedToWindow();
+	GUIRowColumn::AttachedToWindow();
 }
 
 void
 LaunchPadView::MessageReceived( BMessage* m )
 {
-	DockPane* pane;
-
-	switch ( m->what ) {
-	case kMsgChangeDisplayMode:
-		switch ( PaneAppearance() ) {
-		case kLargeIconWithCaption:
-		case kLargeIconWithoutCaption:
-			SetPaneAppearance( kMiniIconWithoutCaption );
+	switch ( m->what )
+	{
+		case kMsgChangeDisplayMode:
+			switch ( PaneAppearance() )
+			{
+				case kLargeIconWithCaption:
+				case kLargeIconWithoutCaption:
+					SetPaneAppearance( kMiniIconWithoutCaption );
+					break;
+				case kMiniIconWithCaption:
+				case kMiniIconWithoutCaption:
+					SetPaneAppearance( kLargeIconWithoutCaption );
+					break;
+				default:
+					break;
+			}
 			break;
-		case kMiniIconWithCaption:
-		case kMiniIconWithoutCaption:
-			SetPaneAppearance( kLargeIconWithoutCaption );
+		case kMsgInsertPaneAt:
+		{
+			DockPane* pane;
+			m->FindPointer( (const char*)"SourceDockPane", (void**)&pane );
+			InsertPaneAt( pane );
+			break;
+		}
+		case kMsgRemovePane:
+		{
+			DockPane* pane;
+			m->FindPointer( (const char*)"SourceDockPane", (void**)&pane );
+			RemovePane( pane );
+			break;
+		}
+		case kMsgChangePaneLayout:
+			if ( PaneArrangement() == B_ITEMS_IN_COLUMN )
+			{
+				SetPaneArrangement( B_ITEMS_IN_ROW );
+			}
+			else
+			{
+				SetPaneArrangement( B_ITEMS_IN_COLUMN );
+			}
 			break;
 		default:
+			GUIRowColumn::MessageReceived( m );
 			break;
-		}
-		break;
-	case kMsgInsertPaneAt:
-		m->FindPointer( (const char*)"SourceDockPane", (void**)&pane );
-		InsertPaneAt( pane );
-		break;
-	case kMsgRemovePane:
-		m->FindPointer( (const char*)"SourceDockPane", (void**)&pane );
-		RemovePane( pane );
-		break;
-	case kMsgChangePaneLayout:
-		if ( PaneArrangement() == B_ITEMS_IN_COLUMN ) {
-			SetPaneArrangement( B_ITEMS_IN_ROW );
-		} else {
-			SetPaneArrangement( B_ITEMS_IN_COLUMN );
-		}
-		break;
-	default:
-		BView::MessageReceived( m );
-		break;
 	}
 }
 
@@ -128,9 +139,12 @@ LaunchPadView::BuildPopUpMenu( BPopUpMenu* popUp )
 	popUp->AddItem( item );
 
 	// Pane appearance
-	if ( PaneAppearance() == kLargeIconWithoutCaption ) {
+	if ( PaneAppearance() == kLargeIconWithoutCaption )
+	{
 		sprintf( label, "Mini icons" );
-	} else {
+	}
+	else
+	{
 		sprintf( label, "Large icons" );
 	}
 	item = new BMenuItem( label, new BMessage( kMsgChangeDisplayMode ) );
@@ -138,9 +152,12 @@ LaunchPadView::BuildPopUpMenu( BPopUpMenu* popUp )
 	popUp->AddItem( item );
 
 	// Pane layout
-	if ( PaneArrangement() == B_ITEMS_IN_ROW ) {
+	if ( PaneArrangement() == B_ITEMS_IN_ROW )
+	{
 		sprintf( label, "Arrange panes horizontally" );
-	} else {
+	}
+	else
+	{
 		sprintf( label, "Arrange panes vertically" );
 	}
 	item = new BMenuItem( label, new BMessage( kMsgChangePaneLayout ) );
@@ -157,7 +174,10 @@ LaunchPadView::BuildPopUpMenu( BPopUpMenu* popUp )
 	popUp->AddItem( item );
 
 	// About box
-	item = new BMenuItem( "About LaunchPad" B_UTF8_ELLIPSIS, new BMessage( B_ABOUT_REQUESTED ) );
+	item = new BMenuItem(
+					"About LaunchPad" B_UTF8_ELLIPSIS,
+					new BMessage( B_ABOUT_REQUESTED )
+					);
 	item->SetTarget( be_app, be_app );
 	popUp->AddItem( item );
 }
@@ -165,7 +185,8 @@ LaunchPadView::BuildPopUpMenu( BPopUpMenu* popUp )
 DockPane*
 LaunchPadView::InsertPaneAt( DockPane* siblingPane )
 {
-	if ( Window()->Lock() ) {
+	if ( Window()->Lock() )
+	{
 		DockPane *newPane = new DockPane(	BPoint(0,0),
 											DisplayMode() );
 		newPane->SetTarget( this, Window() );
@@ -176,7 +197,9 @@ LaunchPadView::InsertPaneAt( DockPane* siblingPane )
 #endif
 		Window()->Unlock();
 		return newPane;
-	} else {
+	}
+	else
+	{
 		return NULL;
 	}
 }
@@ -184,12 +207,15 @@ LaunchPadView::InsertPaneAt( DockPane* siblingPane )
 void
 LaunchPadView::RemovePane( DockPane* pane )
 {
-	if ( mDockHolder->CountChildren() == 1 ) {
+	if ( mDockHolder->CountChildren() == 1 )
+	{
 		return;
 	}
 
-	if ( Window()->Lock() ) {
-		if ( mDockHolder->RemoveChild( pane ) == true || true ) {
+	if ( Window()->Lock() )
+	{
+		if ( mDockHolder->RemoveChild( pane ) == true || true )
+		{
 			// successfully removed
 			delete pane;
 			Refresh();
@@ -219,8 +245,10 @@ LaunchPadView::Refresh( void )
 	BMessage* msg;
 
 	// Set pane appearance
-	for ( int i = 0; i < mDockHolder->CountChildren(); i++ ) {
-		((DockPane*)mDockHolder->ChildAt(i))->SetPaneAppearance( PaneAppearance() );
+	for ( int i = 0; i < mDockHolder->CountChildren(); i++ )
+	{
+		static_cast<DockPane*>(mDockHolder->ChildAt(i))->
+			SetPaneAppearance( PaneAppearance() );
 	}
 
 	// Set orientation and at the same time refresh the layout.
@@ -232,9 +260,12 @@ LaunchPadView::Refresh( void )
 
 	// Relocate window tab
 	msg = new BMessage( kMsgSetTabOrientation );
-	if ( PaneArrangement() == B_ITEMS_IN_ROW ) {
+	if ( PaneArrangement() == B_ITEMS_IN_ROW )
+	{
 		msg->AddInt32( "orientation", B_HORIZONTAL );
-	} else {
+	}
+	else
+	{
 		msg->AddInt32( "orientation", B_VERTICAL );
 	}
 	Window()->PostMessage( msg );

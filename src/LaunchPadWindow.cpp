@@ -1,4 +1,4 @@
-//
+// $Id$
 // LaunchPadWindow.cpp
 //
 
@@ -39,77 +39,96 @@ LaunchPadWindow::~LaunchPadWindow()
 }
 
 void
-LaunchPadWindow::MessageReceived( BMessage *m )
+LaunchPadWindow::MessageReceived( BMessage* m )
 {
-	switch ( m->what ) {
-	default:
-		PaletteWindow::MessageReceived( m );
-		break;
+	switch ( m->what )
+	{
+		default:
+			PaletteWindow::MessageReceived( m );
+			break;
 	}
 }
 
 bool
 LaunchPadWindow::QuitRequested( void )
 {
-	BMessage	saveRequest( kMsgSaveSettings );
-	BMessage	padSetting( kMsgPadSetting );
-
 	BAlert*	alert = new BAlert(	"",
 								"Do you want savethe settings for this pad?",
 								"Don't save", "Save", "Cancel",
 								B_WIDTH_AS_USUAL, B_WARNING_ALERT );
-	switch ( alert->Go() ) {
-	case 0:	// Don' save
-		// The following check should be removed. much better to do it thru
-		// atomic operations of static member var within the dtor.
-		mSaveNeeded = false;
-		if ( be_app->Lock() ) {
-			int32 windowCount = be_app->CountWindows();
-			be_app->Unlock();
-			PRINT(( "WindowCount = %d\n", windowCount ));
-			if ( windowCount == 1 ) {
-				be_app->PostMessage( B_QUIT_REQUESTED );
+	switch ( alert->Go() )
+	{
+		case 0:	// Don' save
+			// The following check should be removed. much better to do it thru
+			// atomic operations of static member var within the dtor.
+			mSaveNeeded = false;
+			if ( be_app->Lock() )
+			{
+				int32 windowCount = be_app->CountWindows();
+				be_app->Unlock();
+				PRINT(( "WindowCount = %d\n", windowCount ));
+				if ( windowCount == 1 )
+				{
+					be_app->PostMessage( B_QUIT_REQUESTED );
+				}
 			}
-		} else {
-			BAlert* errorDialog = new BAlert(	"",
-												"Coundn't lock window",
-												"", "", "Continue",
-												B_WIDTH_AS_USUAL, B_WARNING_ALERT );
-			errorDialog->Go();
-		}
-		return true;
-		break;
-	case 1:	// Save
-		if ( GetSetting( &padSetting ) < B_NO_ERROR ) {
-			BAlert*	errorDialog = new BAlert(	"",
-												"Couldn't save setting",
-												"", "", "Continue",
-												B_WIDTH_AS_USUAL, B_WARNING_ALERT );
-			errorDialog->Go();
-			return false;
-		}
-		saveRequest.AddMessage( "PadSetting", &padSetting );
-		be_app->PostMessage( &saveRequest );
-		mSaveNeeded = false;
-		if ( be_app->Lock() ) {
-			int32 windowCount = be_app->CountWindows();
-			be_app->Unlock();
-			if ( windowCount == 1 ) {
-				be_app->PostMessage( B_QUIT_REQUESTED );
+			else
+			{
+				BAlert* errorDialog = new BAlert(
+											"",
+											"Coundn't lock window",
+											"", "", "Continue",
+											B_WIDTH_AS_USUAL, B_WARNING_ALERT
+											);
+				errorDialog->Go();
 			}
-		} else {
-			BAlert* errorDialog = new BAlert(	"",
-												"Coundn't lock window",
-												"", "", "Continue",
-												B_WIDTH_AS_USUAL, B_WARNING_ALERT );
-			errorDialog->Go();
+			return true;
+			break;
+		case 1:	// Save
+		{
+			BMessage padSetting( kMsgPadSetting );
+			if ( GetSetting( &padSetting ) < B_NO_ERROR )
+			{
+				BAlert*	errorDialog = new BAlert(
+											"",
+											"Couldn't save setting",
+											"", "", "Continue",
+											B_WIDTH_AS_USUAL, B_WARNING_ALERT
+											);
+				errorDialog->Go();
+				return false;
+			}
+			BMessage saveRequest( kMsgSaveSettings );
+			saveRequest.AddMessage( "PadSetting", &padSetting );
+			be_app->PostMessage( &saveRequest );
+			mSaveNeeded = false;
+			if ( be_app->Lock() )
+			{
+				int32 windowCount = be_app->CountWindows();
+				be_app->Unlock();
+				if ( windowCount == 1 )
+				{
+					be_app->PostMessage( B_QUIT_REQUESTED );
+				}
+			}
+			else
+			{
+				BAlert* errorDialog = new BAlert(
+											"",
+											"Coundn't lock window",
+											"", "", "Continue",
+											B_WIDTH_AS_USUAL, B_WARNING_ALERT
+											);
+				errorDialog->Go();
+			}
+			return true;
+			break;
 		}
-		return true;
-		break;
-	case 2:	// Cancel
-	default:
-		break;
+		case 2:	// Cancel
+		default:
+			break;
 	}
+
 	return false;
 }
 
@@ -128,8 +147,10 @@ LaunchPadWindow::RelocateMyselfIfNeeded( void )
 	BScreen screen;
 	BRect newFrame = screen.Frame();
 
-	newLeftTop.x = (Frame().LeftTop().x / mScreenRect.Width()) * newFrame.Width();
-	newLeftTop.y = (Frame().LeftTop().y / mScreenRect.Height()) * newFrame.Height();
+	newLeftTop.x =
+		( Frame().LeftTop().x / mScreenRect.Width() ) * newFrame.Width();
+	newLeftTop.y =
+		( Frame().LeftTop().y / mScreenRect.Height() ) * newFrame.Height();
 	newLeftTop.ConstrainTo( newFrame );
 	MoveTo( newLeftTop );
 
@@ -150,7 +171,8 @@ LaunchPadWindow::GetSetting( BMessage* padSetting )
 		padSetting->AddInt32( "NumberOfPanes", mPadView->CountPanes() );
 		padSetting->AddInt32( "PaneAppearance", mPadView->PaneAppearance() );
 		padSetting->AddInt32( "PaneLayout", mPadView->PaneArrangement() );
-		for ( int i = 0; i < mPadView->CountPanes(); i++ ) {
+		for ( int i = 0; i < mPadView->CountPanes(); i++ )
+		{
 			BMessage	paneSetting;
 			DockPane*	pane = mPadView->PaneAt(i);
 			if ( pane->HasRef() )
