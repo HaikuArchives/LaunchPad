@@ -47,11 +47,6 @@ DockPane::~DockPane()
 void
 DockPane::InitObject( void )
 {
-	PRINT(( "DockPane \"%s\" init..\n", Name() ));
-
-//	mClickFilter = new LClickFilter();
-//	AddFilter( mClickFilter );
-
 	mDockItem = new DockItem();
 	mBgColor = ltGray;
 	mFgColor = black;
@@ -341,6 +336,8 @@ DockPane::MouseMoved( BPoint p, uint32 code, const BMessage *m )
 void
 DockPane::MouseUp( BPoint p )
 {
+	StopMouseWatchDog();
+
 	BMessage* m = Window()->CurrentMessage();
 
 	uint32 buttons = m->FindInt32( "buttons" );
@@ -359,8 +356,6 @@ DockPane::MouseUp( BPoint p )
 
 	HighlightBitmap( false );
 	mTracking = false;
-
-	StopMouseWatchDog();
 }
 
 void
@@ -394,7 +389,6 @@ void
 DockPane::PopUpGo( BPoint p )
 {
 	BMenuItem*	item;
-	BMenuItem*	selected;
 	char		label[40];
 
 	BPopUpMenu popUp( "OnBitmap", false, false );
@@ -429,7 +423,8 @@ DockPane::PopUpGo( BPoint p )
 		popUp.AddItem( item );
 	}
 
-	item = new BMenuItem( "Insert a pane here", new BMessage( kMsgInsertPaneAt ) );
+	item = new BMenuItem( "Insert a pane here",
+						  new BMessage( kMsgInsertPaneAt ) );
 	item->SetTarget( this, Window() );
 	popUp.AddItem( item );
 
@@ -441,8 +436,9 @@ DockPane::PopUpGo( BPoint p )
 
 	ConvertToScreen( &p );
 	BRect	clickToOpenRect( p.x-10, p.y-10, p.x+10, p.y+10 );
-	snooze( 20*1000 );
-	selected = popUp.Go( p, true, true, clickToOpenRect, false );
+	// what? snooze? what was I thinking? what the f**k is it doing here?
+//	snooze( 20*1000 );
+	popUp.Go( p, true, true, clickToOpenRect, false );
 
 	HighlightBitmap( false );
 }

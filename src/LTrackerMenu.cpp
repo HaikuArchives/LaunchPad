@@ -1,12 +1,11 @@
 // $Id$
-//
 
-#include <Debug.h>
+#include <be/support/Debug.h>
 #include "LTrackerMenu.h"
-#include <storage/Entry.h>
-#include <storage/Directory.h>
-#include <storage/Mime.h>	// B_MINI_ICON etc...
-#include <storage/NodeInfo.h>
+#include <be/storage/Entry.h>
+#include <be/storage/Directory.h>
+#include <be/storage/Mime.h>	// B_MINI_ICON etc...
+#include <be/storage/NodeInfo.h>
 #include <stdio.h>
 
 // --------------------------------------------------------------------------
@@ -31,7 +30,8 @@ LTrackerMenu::~LTrackerMenu()
 void
 LTrackerMenu::AttachedToWindow( void )
 {
-	if ( !mIsValid ) {
+	if ( !mIsValid )
+	{
 		ScanFolder();
 		SetTargetForItems( Superitem()->Target() );
 	}
@@ -49,7 +49,8 @@ LTrackerMenu::ScanFolder( void )
 	LTrackerMenu*		subMenu;
 
 	node.SetTo( &mRef );
-	if ( !node.IsDirectory() ) {
+	if ( !node.IsDirectory() )
+	{
 #if DEBUG
 		BEntry entry( &mRef );
 		char label[B_FILE_NAME_LENGTH];
@@ -61,22 +62,29 @@ LTrackerMenu::ScanFolder( void )
 
 	folder.SetTo( &mRef );
 
-	if ( folder.CountEntries() == 0 ) {
+	if ( folder.CountEntries() == 0 )
+	{
 		BMenuItem* empty = new BMenuItem( "Empty Folder", NULL );
 		empty->SetEnabled( false );
 		SetTriggersEnabled( false );
 		AddItem( empty );
-	} else {
-		while ( folder.GetNextRef( &itemRef ) != B_ENTRY_NOT_FOUND ) {
+	}
+	else
+	{
+		while ( folder.GetNextRef( &itemRef ) != B_ENTRY_NOT_FOUND )
+		{
 			node.SetTo( &itemRef );
 			BMessage* msg = new BMessage( *Superitem()->Message() );
 			msg->RemoveName( "refs" );
 			msg->AddRef( "refs", &itemRef );
-			if ( node.IsDirectory() ) {
+			if ( node.IsDirectory() )
+			{
 				subMenu = new LTrackerMenu( &itemRef );
 				subMenu->SetFont( be_plain_font );
 				item = new LTrackerMenuItem( &itemRef, subMenu, msg );
-			} else {
+			}
+			else
+			{
 				item = new LTrackerMenuItem( &itemRef, msg );
 			}
 			AddItem( item );
@@ -98,7 +106,8 @@ LTrackerMenu::BuildMenu( const entry_ref* ref, BMessage* message, BHandler* targ
 	BDirectory	folder;
 
 	node.SetTo( ref );
-	if ( !node.IsDirectory() ) {
+	if ( !node.IsDirectory() )
+	{
 		return NULL;
 	}
 
@@ -148,9 +157,11 @@ LTrackerMenuItem::InitObject( const entry_ref* ref )
 	BEntry	entry( ref, true );
 
 	// if ref is a broken sym-link, the above init fails...
-	if ( entry.InitCheck() < B_NO_ERROR ) {
+	if ( entry.InitCheck() < B_NO_ERROR )
+	{
 		entry.SetTo( ref, false );
-		// (BeOS PR2) at this point, entry should be okay. but for some reason, GetTrackerIcon locks up app_server...
+		// (BeOS PR2) at this point, entry should be okay,
+		// but for some reason, GetTrackerIcon locks up app_server...
 		needIcon = false;
 	}
 
@@ -160,8 +171,10 @@ LTrackerMenuItem::InitObject( const entry_ref* ref )
 	SetLabel( label );
 
 	// icon
-	if ( needIcon ) {
-		BNodeInfo::GetTrackerIcon( const_cast<entry_ref*>(ref), mMiniIcon, B_MINI_ICON );
+	if ( needIcon )
+	{
+		BNodeInfo::GetTrackerIcon( const_cast<entry_ref*>(ref), mMiniIcon,
+								   B_MINI_ICON );
 	}
 }
 
@@ -187,12 +200,16 @@ LTrackerMenuItem::DrawContent( void )
 
 	// label
 	Menu()->MovePenBy( 20, 12 );
-	if ( IsSelected() ) {	// Highlighted...
+	if ( IsSelected() )
+	{
+		// Highlighted...
 		rgb_color	lowColor = Menu()->LowColor();
 		Menu()->SetLowColor( 152, 152, 152, 255 );
 		Menu()->DrawString( Label() );
 		Menu()->SetLowColor( lowColor );
-	} else {
+	}
+	else
+	{
 		Menu()->DrawString( Label() );
 	}
 }
