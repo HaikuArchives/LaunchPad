@@ -115,6 +115,8 @@ PaneView::SetItem( DockItem* item )
 	mItem = item;
 
 	UnlockLooper();
+
+	return B_NO_ERROR;
 }
 
 // vi: set ts=4:
