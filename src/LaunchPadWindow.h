@@ -1,4 +1,4 @@
-//
+// $Id$
 // LaunchPadWindow.h
 //
 #ifndef _LAUNCH_PAD_WINDOW_H
