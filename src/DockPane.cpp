@@ -1,4 +1,4 @@
-//
+// $Id$
 // DockPane.cpp
 //
 
@@ -23,7 +23,8 @@ DockPane::DockPane( BPoint p, uint32 paneAppearance )
 :	BControl(	BRect(p.x,p.y,p.x,p.y),
 				"DockPane", "Label",
 				new BMessage( kMsgFromDockPane ),
-				B_FOLLOW_NONE, B_WILL_DRAW )
+				B_FOLLOW_NONE, B_WILL_DRAW ),
+	mLastTimeClicked( 0 )
 {
 	SetPaneAppearance( paneAppearance );
 	InitObject();
@@ -150,11 +151,6 @@ DockPane::GetPreferredSize( float *w, float *h )
 void
 DockPane::MessageReceived( BMessage *m )
 {
-#if defined(DEBUG)
-	puts( class_name( this ) );
-	m->PrintToStream();
-#endif
-
 	entry_ref	droppedRef;
 	entry_ref	paneRef;
 	entry_ref	ref;
@@ -219,14 +215,14 @@ DockPane::MouseDown( BPoint p )
 	bigtime_t clickSpeed;
 	get_click_speed( &clickSpeed );
 
+	int64 when;
 	uint32 buttons = 0; 
 	BMessage *m = Window()->CurrentMessage();
 	m->FindInt32( "buttons", (int32 *)&buttons ); 
-
+	m->FindInt64( "when", &when );
+#if 1
 	if ( buttons == B_PRIMARY_MOUSE_BUTTON ) {
 		// Double click?
-		int64 when;
-		m->FindInt64( "when", &when );
 		if ( (when-mLastTimeClicked) <= clickSpeed ) {
 			DoubleClicked();
 			HighlightBitmap( false );
@@ -234,6 +230,7 @@ DockPane::MouseDown( BPoint p )
 		}
 		mLastTimeClicked = when;
 	}
+#endif
 
 	BPoint lastPoint( p );
 
@@ -270,6 +267,7 @@ DockPane::MouseDown( BPoint p )
 			DoubleClicked();
 			HighlightBitmap( false );
 		}
+		mLastTimeClicked = when;
 		break;
 	case B_SECONDARY_MOUSE_BUTTON:
 		PopUpGo( p );
@@ -432,7 +430,7 @@ DockPane::DroppedToOtherPane( void )
 }
 
 void
-DockPane::Launch( BMessage*			droppedMsg )
+DockPane::Launch( BMessage* droppedMsg )
 {
 	if ( mDockItem->IsFolder() ) {
 		OpenFolder();
@@ -576,3 +574,6 @@ void LaunchRef( entry_ref* ref )
 		be_roster->Launch( ref );
 	}
 }
+
+// vi: set ts=4:
+
