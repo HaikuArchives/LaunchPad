@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define DRAG_BITMAP	0
+#define DRAG_BITMAP	1
 
 const char kTrackerSig[] = "application/x-vnd.Be-TRAK";
 static void LaunchRef( entry_ref* ref );
@@ -154,25 +154,33 @@ DockPane::MessageReceived( BMessage *m )
 	entry_ref	droppedRef;
 	entry_ref	paneRef;
 	entry_ref	ref;
-	DockPane*	source;
 	BWindow*	window;
 
 	switch ( m->what ) {
 	case kMsgDraggedFromDockPane:
 	case B_SIMPLE_DATA:
-		if ( m->what == B_SIMPLE_DATA ) {	// uh.. butt ugly.
+	{
+		DockPane*	source;
+		if ( m->what == B_SIMPLE_DATA )
+		{	// uh.. butt ugly.
 			m->FindRef( "refs", &droppedRef );
-		} else {
+		}
+		else
+		{
 			m->FindRef( "Refs", &droppedRef );	// probably not used any more.
 		}
 		// Dropped onto the bitmap? (then launch it)
-		if ( WillAccept() ) {
+		if ( WillAccept() )
+		{
 			Launch( m );
 			break;
 		}
 		// Dragged from other pane?
-		if ( m->FindPointer( "SourcePad", (void**)&window ) == B_OK ) {
-			if ( window == Window() && m->FindPointer( "SourceDockPane", (void**)&source ) == B_OK ) {
+		if ( m->FindPointer( "SourcePad", (void**)&window ) == B_OK )
+		{
+			if ( window == Window() &&
+				 m->FindPointer( "SourceDockPane", (void**)&source ) == B_OK )
+			{
 				source->DroppedToOtherPane();
 			}
 		}
@@ -181,6 +189,7 @@ DockPane::MessageReceived( BMessage *m )
 		mPaneHighlight = false;
 		Invalidate();
 		break;
+	}
 	case kMsgRemoveItem:
 		ClearDockPane();
 		break;
@@ -212,12 +221,33 @@ DockPane::MouseDown( BPoint p )
 
 	HighlightBitmap( true );
 
+	SetMouseEventMask( B_POINTER_EVENTS );
+    mTracking = true;
+    mHotSpot = p;
+
+	BMessage* m = Window()->CurrentMessage();
+	uint32 buttons = m->FindInt32( "buttons" );
+	mClicks = m->FindInt32( "clicks" );
+
+	switch ( buttons )
+	{
+	case B_PRIMARY_MOUSE_BUTTON:
+		break;
+	case B_SECONDARY_MOUSE_BUTTON:
+		PopUpGo( p );
+		break;
+	default:
+		break;
+	}
+
+    return;
+
+#if 0
 	bigtime_t clickSpeed;
 	get_click_speed( &clickSpeed );
 
 	int64 when;
 	uint32 buttons = 0; 
-	BMessage *m = Window()->CurrentMessage();
 	m->FindInt32( "buttons", (int32 *)&buttons ); 
 	m->FindInt64( "when", &when );
 #if 1
@@ -281,28 +311,63 @@ DockPane::MouseDown( BPoint p )
 	}
 
 	HighlightBitmap( false );
+#endif
 }
 
 void
-DockPane::MouseMoved( BPoint, uint32 code, const BMessage *m )
+DockPane::MouseMoved( BPoint p, uint32 code, const BMessage *m )
 {
 	bool bitmapHighlightOld = mBitmapHighlight;
 	bool paneHighlightOld = mPaneHighlight;
 	DockPane *sourcePane;
 
-	switch ( code ) {
+	if ( m == NULL )
+	{
+		if ( mTracking && mClicks > 0 &&
+			 ( fabsf( p.x - mHotSpot.x ) > 2.0 ||
+			   fabsf( p.y - mHotSpot.y ) > 2.0 ) )
+		{
+			PRINT(( "Start dragging\n" ));
+			mClicks = 0;
+			entry_ref ref;
+			if ( mDockItem->GetRef( &ref ) != B_NO_ERROR ) {
+				return; // Invalid ref
+			}
+			BMessage dragMsg( B_SIMPLE_DATA );
+			dragMsg.AddRef( "refs", &ref );
+			dragMsg.AddPointer( "SourceDockPane", this );
+			dragMsg.AddPointer( "SourcePad", Window() );
+#if DRAG_BITMAP
+			DragMessage( &dragMsg, (BBitmap*)Icon(), B_OP_ALPHA, mHotSpot );
+#else
+			DragMessage( &dragMsg, Bounds() );
+#endif
+			HighlightBitmap( false );
+		}
+		return;
+	}
+
+	switch ( code )
+	{
 	case B_ENTERED_VIEW:
 	case B_INSIDE_VIEW:
 		if ( m == NULL )
+		{
 			break;
+		}
 		mPaneHighlight = true;
-		if ( m->FindPointer( "SourceDockPane", (void**)&sourcePane ) == B_OK && sourcePane == this ) {
+		if ( m->FindPointer( "SourceDockPane", (void**)&sourcePane ) == B_OK &&
+			 sourcePane == this )
+		{
 			SetWillAccept( false );
 			break;
 		}
-		if ( mDockItem->HasRef() ) {
+		if ( mDockItem->HasRef() )
+		{
 			SetWillAccept( true );
-		} else {
+		}
+		else
+		{
 			SetWillAccept( false );
 		}
 		break;
@@ -315,13 +380,34 @@ DockPane::MouseMoved( BPoint, uint32 code, const BMessage *m )
 		break;
 	}
 
-	if ( mBitmapHighlight != bitmapHighlightOld || mPaneHighlight != paneHighlightOld )
+	if ( mBitmapHighlight != bitmapHighlightOld ||
+		 mPaneHighlight != paneHighlightOld )
+	{
 		Invalidate();
+	}
 }
 
 void
 DockPane::MouseUp( BPoint p )
 {
+	BMessage *m = Window()->CurrentMessage();
+
+	uint32 buttons = m->FindInt32( "buttons" );
+
+	if ( true || buttons & B_PRIMARY_MOUSE_BUTTON )
+	{
+		if ( mClicks == 1 )
+		{
+			DoubleClicked();
+		}
+		else if ( mClicks == 2 )
+		{
+			DoubleClicked();
+		}
+	}
+
+	HighlightBitmap( false );
+	mTracking = false;
 }
 
 void

@@ -78,6 +78,9 @@ private:
 	BPopUpMenu*			mPopUpOnPaneArea;
 	LClickFilter*		mClickFilter;
 	static bool			mEnableSingleClick;
+	bool				mTracking;
+	BPoint				mHotSpot;
+	int32				mClicks;
 };
 
 // vi: set ts=4:
