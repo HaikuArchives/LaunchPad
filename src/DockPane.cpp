@@ -227,11 +227,12 @@ DockPane::MouseDown( BPoint p )
 
 	BMessage* m = Window()->CurrentMessage();
 	uint32 buttons = m->FindInt32( "buttons" );
-	mClicks = m->FindInt32( "clicks" );
+	mClicks = 0;
 
 	switch ( buttons )
 	{
 	case B_PRIMARY_MOUSE_BUTTON:
+		mClicks = m->FindInt32( "clicks" );
 		break;
 	case B_SECONDARY_MOUSE_BUTTON:
 		PopUpGo( p );
@@ -241,77 +242,6 @@ DockPane::MouseDown( BPoint p )
 	}
 
     return;
-
-#if 0
-	bigtime_t clickSpeed;
-	get_click_speed( &clickSpeed );
-
-	int64 when;
-	uint32 buttons = 0; 
-	m->FindInt32( "buttons", (int32 *)&buttons ); 
-	m->FindInt64( "when", &when );
-#if 1
-	if ( buttons == B_PRIMARY_MOUSE_BUTTON )
-	{
-		int32 clicks = m->FindInt32( "clicks" );
-		// Double click?
-		//if ( (when-mLastTimeClicked) <= clickSpeed )
-		if ( clicks == 2 )
-		{
-			DoubleClicked();
-			HighlightBitmap( false );
-			return;
-		}
-		mLastTimeClicked = when;
-	}
-#endif
-
-	BPoint lastPoint( p );
-
-	switch ( buttons ) {
-	case B_PRIMARY_MOUSE_BUTTON:
-		while ( buttons ) {
-			if ( p != lastPoint ) {		// Drag
-				entry_ref ref;
-				if ( mDockItem->GetRef( &ref ) != B_NO_ERROR ) {
-					break; // Invalid ref
-				}
-				BMessage dragMsg( B_SIMPLE_DATA );
-				dragMsg.AddRef( "refs", &ref );
-				dragMsg.AddPointer( "SourceDockPane", this );
-				dragMsg.AddPointer( "SourcePad", Window() );
-#if DRAG_BITMAP
-				DragMessage( &dragMsg, (BBitmap*)Icon(), B_OP_ALPHA, BPoint( 0, 0 ) );
-#else
-				DragMessage( &dragMsg, Bounds() );
-#endif
-				HighlightBitmap( false );
-				return;
-			} else {
-				if ( (system_time()-mLastTimeClicked) > 2 * clickSpeed ) {
-					PopUpGo( p );
-					break;
-				}
-			}
-			snooze( 20 * 1000 );
-			GetMouse( &p, &buttons, true );
-		}
-		if ( true &&
-			(system_time() - mLastTimeClicked) < clickSpeed ) {
-			DoubleClicked();
-			HighlightBitmap( false );
-		}
-		mLastTimeClicked = when;
-		break;
-	case B_SECONDARY_MOUSE_BUTTON:
-		PopUpGo( p );
-		break;
-	default:
-		break;
-	}
-
-	HighlightBitmap( false );
-#endif
 }
 
 void
