@@ -1,7 +1,27 @@
 dnl $Id$
 AC_INIT( src/LaunchPadApp.cpp )
+AC_CONFIG_AUX_DIR( config )
+AC_CANONICAL_HOST
 
+dnl AC_PROG_CC
+dnl AC_PROG_CXX
+
+dnl -------------------------------------------------------------------
+dnl Check for architecture
+dnl -------------------------------------------------------------------
+case $host_cpu in
+	i586|i386)
+		CPU=x86
+		;;
+	ppc|powerpc)
+		CPU=ppc
+		;;
+esac
+AC_SUBST(CPU)
+
+dnl -------------------------------------------------------------------
 dnl Check for BeOS R4
+dnl -------------------------------------------------------------------
 AC_MSG_CHECKING( [BeOS Release] )
 release=[$(uname -r | sed 's/\([^\.]*\)\..*/\1/')]
 case "$release" in
@@ -38,12 +58,25 @@ dnl ------------------------------------------------------------------
 dnl Version info
 dnl ------------------------------------------------------------------
 
-AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_MAJOR, 1)
-AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_MIDDLE, 3)
-AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_MINOR, 0)
-AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_VARIETY, d)
-AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_INTERNAL, 1)
+VERSION_MAJOR=1
+VERSION_MIDDLE=3
+VERSION_MINOR=0
+VERSION_VARIETY=d
+VERSION_INTERNAL=1
+VERSION_STRING=$VERSION_MAJOR.$VERSION_MIDDLE.$VERSION_MINOR$VERSION_VARIETY$VERSION_INTERNAL
 
-AC_CONFIG_HEADER(config.h)
-AC_OUTPUT(Makefile src/Makefile)
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_MAJOR, $VERSION_MAJOR)
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_MIDDLE, $VERSION_MIDDLE)
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_MINOR, $VERSION_MINOR)
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_VARIETY, $VERSION_VARIETY)
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_INTERNAL, $VERSION_INTERNAL)
+AC_SUBST(VERSION_MAJOR)
+AC_SUBST(VERSION_MIDDLE)
+AC_SUBST(VERSION_MINOR)
+AC_SUBST(VERSION_VARIETY)
+AC_SUBST(VERSION_INTERNAL)
+AC_SUBST(VERSION_STRING)
+
+AC_CONFIG_HEADER(config/config.h)
+AC_OUTPUT(Makefile.header Makefile src/Makefile)
 

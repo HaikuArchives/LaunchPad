@@ -1,0 +1,37 @@
+# $Id$
+
+x86_CC = gcc
+x86_CXX = g++
+x86_LD = g++
+x86_DEPEND = $(CC) $(CFLAGS) -MM
+
+ppc_CC = mwcc
+ppc_CXX = mwcc
+ppc_LD = mwcc
+ppc_DEPEND = $(CC) $(CFLAGS) -make
+
+CPU = @CPU@
+CC = $($(CPU)_CC)
+CXX = $($(CPU)_CXX)
+LD = $($(CPU)_LD)
+DEPEND = $($(CPU)_DEPEND)
+MIMESET = mimeset
+XRES = xres
+
+COMPILE = $(CC) $(CFLAGS)
+CXXCOMPILE = $(CXX) $(CXXFLAGS)
+
+.SUFFIXES:	.cpp .c .r
+
+.c.o:
+	$(COMPILE) -c $< -o $@
+
+.cpp.o:
+	$(CXXCOMPILE) -c $< -o $@
+
+VERSION_MAJOR = @VERSION_MAJOR@
+VERSION_MIDDLE = @VERSION_MIDDLE@
+VERSION_MINOR = @VERSION_MINOR@
+VERSION_VARIETY = @VERSION_VARIETY@
+VERSION_INTERNAL = @VERSION_INTERNAL@
+VERSION_STRING = @VERSION_STRING@

@@ -523,9 +523,66 @@ else
 fi
 
 
+ac_aux_dir=
+for ac_dir in config  $srcdir/config ; do
+  if test -f $ac_dir/install-sh; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/install-sh -c"
+    break
+  elif test -f $ac_dir/install.sh; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/install.sh -c"
+    break
+  fi
+done
+if test -z "$ac_aux_dir"; then
+  { echo "configure: error: can not find install-sh or install.sh in config  $srcdir/config " 1>&2; exit 1; }
+fi
+ac_config_guess=$ac_aux_dir/config.guess
+ac_config_sub=$ac_aux_dir/config.sub
+ac_configure=$ac_aux_dir/configure # This should be Cygnus configure.
+
+
+# Make sure we can run config.sub.
+if ${CONFIG_SHELL-/bin/sh} $ac_config_sub sun4 >/dev/null 2>&1; then :
+else { echo "configure: error: can not run $ac_config_sub" 1>&2; exit 1; }
+fi
+
+echo $ac_n "checking host system type""... $ac_c" 1>&6
+echo "configure:553: checking host system type" >&5
+
+host_alias=$host
+case "$host_alias" in
+NONE)
+  case $nonopt in
+  NONE)
+    if host_alias=`${CONFIG_SHELL-/bin/sh} $ac_config_guess`; then :
+    else { echo "configure: error: can not guess host type; you must specify one" 1>&2; exit 1; }
+    fi ;;
+  *) host_alias=$nonopt ;;
+  esac ;;
+esac
+
+host=`${CONFIG_SHELL-/bin/sh} $ac_config_sub $host_alias`
+host_cpu=`echo $host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+host_vendor=`echo $host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+host_os=`echo $host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
+echo "$ac_t""$host" 1>&6
+
+
+
+case $host_cpu in
+	i586|i386)
+		CPU=x86
+		;;
+	ppc|powerpc)
+		CPU=ppc
+		;;
+esac
+
 
 echo $ac_n "checking BeOS Release ""... $ac_c" 1>&6
-echo "configure:529: checking BeOS Release " >&5
+echo "configure:586: checking BeOS Release " >&5
 release=$(uname -r | sed 's/\([^\.]*\)\..*/\1/')
 case "$release" in
 	5|4)
@@ -544,7 +601,7 @@ if test "${with_libprefs+set}" = set; then
 fi
 
 echo $ac_n "checking libprefs ""... $ac_c" 1>&6
-echo "configure:548: checking libprefs " >&5
+echo "configure:605: checking libprefs " >&5
 if test "x$with_libprefs" = "x"; then
 	{ echo "configure: error: specify --with-libprefs=PATH " 1>&2; exit 1; }
 else
@@ -561,25 +618,38 @@ fi
 
 
 
+VERSION_MAJOR=1
+VERSION_MIDDLE=3
+VERSION_MINOR=0
+VERSION_VARIETY=d
+VERSION_INTERNAL=1
+VERSION_STRING=$VERSION_MAJOR.$VERSION_MIDDLE.$VERSION_MINOR$VERSION_VARIETY$VERSION_INTERNAL
+
 cat >> confdefs.h <<EOF
-#define LAUNCHPAD_VERSION_MAJOR 1
+#define LAUNCHPAD_VERSION_MAJOR $VERSION_MAJOR
 EOF
 
 cat >> confdefs.h <<EOF
-#define LAUNCHPAD_VERSION_MIDDLE 3
+#define LAUNCHPAD_VERSION_MIDDLE $VERSION_MIDDLE
 EOF
 
 cat >> confdefs.h <<EOF
-#define LAUNCHPAD_VERSION_MINOR 0
+#define LAUNCHPAD_VERSION_MINOR $VERSION_MINOR
 EOF
 
 cat >> confdefs.h <<EOF
-#define LAUNCHPAD_VERSION_VARIETY d
+#define LAUNCHPAD_VERSION_VARIETY $VERSION_VARIETY
 EOF
 
 cat >> confdefs.h <<EOF
-#define LAUNCHPAD_VERSION_INTERNAL 1
+#define LAUNCHPAD_VERSION_INTERNAL $VERSION_INTERNAL
 EOF
+
+
+
+
+
+
 
 
 
@@ -683,7 +753,7 @@ done
 
 ac_given_srcdir=$srcdir
 
-trap 'rm -fr `echo "Makefile src/Makefile config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+trap 'rm -fr `echo "Makefile.header Makefile src/Makefile config/config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -715,7 +785,19 @@ s%@includedir@%$includedir%g
 s%@oldincludedir@%$oldincludedir%g
 s%@infodir@%$infodir%g
 s%@mandir@%$mandir%g
+s%@host@%$host%g
+s%@host_alias@%$host_alias%g
+s%@host_cpu@%$host_cpu%g
+s%@host_vendor@%$host_vendor%g
+s%@host_os@%$host_os%g
+s%@CPU@%$CPU%g
 s%@LIBPREFSDIR@%$LIBPREFSDIR%g
+s%@VERSION_MAJOR@%$VERSION_MAJOR%g
+s%@VERSION_MIDDLE@%$VERSION_MIDDLE%g
+s%@VERSION_MINOR@%$VERSION_MINOR%g
+s%@VERSION_VARIETY@%$VERSION_VARIETY%g
+s%@VERSION_INTERNAL@%$VERSION_INTERNAL%g
+s%@VERSION_STRING@%$VERSION_STRING%g
 
 CEOF
 EOF
@@ -757,7 +839,7 @@ EOF
 
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"Makefile src/Makefile"}
+CONFIG_FILES=\${CONFIG_FILES-"Makefile.header Makefile src/Makefile"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
@@ -833,7 +915,7 @@ ac_eD='%g'
 if test "${CONFIG_HEADERS+set}" != set; then
 EOF
 cat >> $CONFIG_STATUS <<EOF
-  CONFIG_HEADERS="config.h"
+  CONFIG_HEADERS="config/config.h"
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 fi

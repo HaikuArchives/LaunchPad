@@ -1,10 +1,14 @@
 # $Id$
 
+include Makefile.header
+
 SUBDIRS = src
 
 all::	all-recursive
 
 clean:	clean-recursive
+
+depend:	depend-recursive
 
 all-recursive:
 	@list='$(SUBDIRS)'; \
@@ -18,5 +22,22 @@ clean-recursive:
 		(cd $$subdir && make clean); \
 	done
 
-Makefile src/Makefile:	Makefile.in src/Makefile.in
+depend-recursive:
+	@list='$(SUBDIRS)'; \
+	for subdir in $$list; do \
+		(cd $$subdir && make depend); \
+	done
+
+dist:	all
+	DISTDIR=LaunchPad-$(VERSION_STRING); \
+	rm -rf $$DISTDIR; \
+	mkdir $$DISTDIR; \
+	(cd src; DISTDIR=$$DISTDIR make dist); \
+	zip -r $$DISTDIR.zip $$DISTDIR/; \
+	rm -rf $$DISTDIR
+
+Makefile Makefile.header src/Makefile:	Makefile.in Makefile.header.in src/Makefile.in
 	config.status
+
+configure:	configure.in
+	autoconf
