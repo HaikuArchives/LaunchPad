@@ -3,6 +3,7 @@
 #define _ENTRY_ITEM_H
 
 #include "DockItem.h"
+#include <be/storage/Entry.h>
 
 class EntryItem : public DockItem
 {

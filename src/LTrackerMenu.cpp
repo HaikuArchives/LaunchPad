@@ -1,6 +1,4 @@
-//
-// LTrackerMenu.cpp
-//
+// $Id$
 
 #include <stdio.h>
 #include <be/support/Debug.h>
@@ -81,7 +79,7 @@ LTrackerMenu::ScanFolder( void )
 			BMessage* msg = NULL;
 			if ( Superitem()->Message() )
 			{
-				msg = new BMessage( Superitem()->Message() );
+				msg = new BMessage( *Superitem()->Message() );
 				msg->RemoveName( "refs" );
 				msg->AddRef( "refs", &itemRef );
 			}
@@ -123,7 +121,7 @@ LTrackerMenu::BuildMenu( const entry_ref* ref, BMessage* message, BHandler* targ
 	BMessage* msg = NULL;
 	if ( message )
 	{
-		msg = new BMessage( message );
+		msg = new BMessage( *message );
 		msg->AddRef( "refs", ref );
 	}
 
@@ -254,3 +252,5 @@ status_t BuildNavMenu( BMenu* top, const entry_ref* ref, BMessage* message, BHan
 	return B_NO_ERROR;
 }
 #endif
+
+// vi: set ts=4:
