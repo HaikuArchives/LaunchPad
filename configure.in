@@ -5,10 +5,7 @@ dnl Check for BeOS R4
 AC_MSG_CHECKING( [BeOS Release] )
 release=[$(uname -r | sed 's/\([^\.]*\)\..*/\1/')]
 case "$release" in
-	5)
-		AC_MSG_RESULT( [post-R4] )
-		;;
-	4)
+	5|4)
 		AC_MSG_RESULT( [post-R4] )
 		;;
 	*)
@@ -37,5 +34,16 @@ if ! test -d $LIBPREFSDIR; then
 fi
 AC_SUBST(LIBPREFSDIR)
 
-AC_OUTPUT( config.h Makefile src/Makefile )
+dnl ------------------------------------------------------------------
+dnl Version info
+dnl ------------------------------------------------------------------
+
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_MAJOR, 1)
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_MIDDLE, 3)
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_MINOR, 0)
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_VARIETY, d)
+AC_DEFINE_UNQUOTED(LAUNCHPAD_VERSION_INTERNAL 1)
+
+AC_CONFIG_HEADER(config.h)
+AC_OUTPUT(Makefile src/Makefile)
 
