@@ -10,12 +10,14 @@ public:
 						EntryItem( const char* path );
 						EntryItem( entry_ref* ref );
 	virtual				~EntryItem();
+	virtual status_t	BuildMenu( BMenu* menu );
 
 protected:
 	status_t			FinalizeInit( void );
 
 private:
 	entry_ref			mRef;
+	bool				mIsDirectory;
 };
 
 // vi: set ts=4:

@@ -23,12 +23,14 @@ public:
 	virtual void			MouseDown( BPoint point );
 	virtual void			MouseUp( BPoint point );
 
-	void					LetPopUpGo( BPoint point ); // in screen coord
 	status_t				SetItem( DockItem* item );
+	void					Hilite( bool hilite );
 
 protected:
 
 private:
+	void					BuildPopUp( BPopUpMenu* popUp );
+	void					LetPopUpGo( BPoint point ); // in screen coord
 	static status_t			_MouseWatcher( void* arg );
 	status_t				MouseWatcher( void );
 
@@ -36,6 +38,7 @@ private:
 	uint32					mClicks;
 	bigtime_t				mLastTimeClicked;
 	LThread*				mMouseWatcherThread;
+	bool					mHilite;
 };
 
 // vi: set ts=4:

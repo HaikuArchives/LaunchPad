@@ -5,6 +5,7 @@
 #include "LRowColumn.h"
 #include "WindowTab.h"
 #include "PaneView.h"
+#include "EntryItem.h"	// FIXME: don't put anything dependent on item types
 
 LaunchPadWindow::LaunchPadWindow( BRect frame, const char* title )
 :	BWindow(
@@ -45,6 +46,8 @@ LaunchPadWindow::LaunchPadWindow( BRect frame, const char* title )
 									B_FOLLOW_NONE,
 									B_WILL_DRAW
 									);
+		EntryItem* item = new EntryItem( "/boot/home/Develop" );
+		pane->SetItem( item );
 		root->AddChild( pane );
 	}
 

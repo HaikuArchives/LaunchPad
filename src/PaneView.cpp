@@ -2,6 +2,7 @@
 
 #define DEBUG 1
 #include <be/interface/PopUpMenu.h>
+#include <be/interface/MenuItem.h>
 #include <be/interface/Window.h>
 #include "PaneView.h"
 #include "DockItem.h"
@@ -26,7 +27,8 @@ PaneView::PaneView(
 	mItem( NULL ),
 	mClicks( 0 ),
 	mLastTimeClicked( 0 ),
-	mMouseWatcherThread( new LThread( "MouseWatcher" ) )
+	mMouseWatcherThread( new LThread( "MouseWatcher" ) ),
+	mHilite( false )
 {
 }
 
@@ -68,7 +70,7 @@ PaneView::Draw( BRect updateRect )
 		const BBitmap* bitmap;
 
 		// FIXME: large or small?
-		bitmap = mItem->Bitmap( DockItem::LARGE );
+		bitmap = mItem->Bitmap( DockItem::LARGE, mHilite );
 		if ( bitmap )
 		{
 			SetDrawingMode( B_OP_OVER );
@@ -115,23 +117,23 @@ PaneView::MouseDown( BPoint point )
 {
 	ConvertToScreen( &point );
 
-	// click count should be set only for the primary mouse button.
-	mClicks = 0;
-
-	// what button is down, and how many clicks?
+	// what button is down?
 	BMessage* currentMsg = Window()->CurrentMessage();
 	uint32 buttons = currentMsg->FindInt32( "buttons" );
-	uint32 clicks = currentMsg->FindInt32( "clicks" );
 	currentMsg->FindInt64( "when", &mLastTimeClicked );
+
+	Hilite( true );
 
 	if ( buttons & B_SECONDARY_MOUSE_BUTTON )
 	{
+		mClicks = 0;
 		LetPopUpGo( point );
 	}
 	else if ( buttons & B_PRIMARY_MOUSE_BUTTON )
 	{
 		// remember the number of clicks, used when the button is up.
-		mClicks = clicks;
+		// clicks field in the message is not very convenient.
+		++mClicks;
 
 		// spawn a thread to track the mousedown state.
 		mMouseWatcherThread->Create( _MouseWatcher, this );
@@ -139,6 +141,7 @@ PaneView::MouseDown( BPoint point )
 	}
 	else
 	{
+		mClicks = 0;
 		return;
 	}
 }
@@ -146,7 +149,8 @@ PaneView::MouseDown( BPoint point )
 void
 PaneView::MouseUp( BPoint point )
 {
-	printf( "%ld clicks\n", mClicks );
+	Hilite( false );
+
 	mMouseWatcherThread->Kill();
 }
 
@@ -154,14 +158,38 @@ void
 PaneView::LetPopUpGo( BPoint point )
 {
 	BPopUpMenu* popUp = new BPopUpMenu( "PopUp" );
+	popUp->SetFont( be_plain_font );
+
+	BuildPopUp( popUp );
+
 	BRect clickToOpenRect( point.x-5, point.y-5, point.x+5, point.y+5 );
 	popUp->Go( point, true, true, clickToOpenRect, true );
+}
+
+void
+PaneView::BuildPopUp( BPopUpMenu* popUp )
+{
+	status_t err;
+
+	// Item specific menu items.
+	if ( ( err = mItem->BuildMenu( popUp ) ) < B_NO_ERROR )
+	{
+		REPORT_ERROR( err );
+	}
+
+	// Common menu items.
+	if ( popUp->CountItems() > 0 )
+	{
+		popUp->AddSeparatorItem();
+	}
+	popUp->AddItem( new BMenuItem( "Test", NULL ) );
+	popUp->AddItem( new BMenuItem( "Test2", NULL ) );
 }
 
 status_t
 PaneView::SetItem( DockItem* item )
 {
-	LockLooper();
+	if ( Window() ) LockLooper();
 
 	if ( mItem )
 	{
@@ -170,10 +198,21 @@ PaneView::SetItem( DockItem* item )
 	}
 	mItem = item;
 
-	UnlockLooper();
+	if ( Window() ) UnlockLooper();
 
 	return B_NO_ERROR;
 }
+
+void
+PaneView::Hilite( bool hilite )
+{
+	mHilite = hilite;
+	Invalidate();
+}
+
+//
+// Thread to watch for the mouse down state.
+//
 
 status_t
 PaneView::_MouseWatcher( void* arg )

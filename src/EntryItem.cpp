@@ -4,7 +4,9 @@
 #include <be/storage/Entry.h>
 #include <be/storage/NodeInfo.h>
 #include <be/interface/Bitmap.h>
+#include <be/interface/Menu.h>
 #include "EntryItem.h"
+#include "LTrackerMenu.h"
 
 #if DEBUG
 #include <be/support/Debug.h>
@@ -15,7 +17,8 @@ static inline void REPORT_ERROR( int a ) {}
 #endif
 
 EntryItem::EntryItem( const char* path )
-:	DockItem( "Not yet" )
+:	DockItem( "Not yet" ),
+	mIsDirectory( false )
 {
 	status_t err;
 
@@ -43,7 +46,8 @@ EntryItem::EntryItem( const char* path )
 
 EntryItem::EntryItem( entry_ref* ref )
 :	DockItem( "Not yet" ),
-	mRef( *ref )
+	mRef( *ref ),
+	mIsDirectory( false )
 {
 	status_t err = FinalizeInit();
 	if ( err < B_NO_ERROR )
@@ -86,9 +90,47 @@ EntryItem::FinalizeInit( void )
 		REPORT_ERROR( err );
 	}
 
+	// Check if it's a directory.
+	BNode node( &mRef );
+	mIsDirectory = node.IsDirectory();
+
 	return err;
 }
 
 EntryItem::~EntryItem()
 {
 }
+
+status_t
+EntryItem::BuildMenu( BMenu* menu )
+{
+	status_t err;
+
+	if ( mIsDirectory )
+	{
+		BMenuItem* item = LTrackerMenu::BuildMenu( &mRef, NULL, NULL );
+		if ( item )
+		{
+			if ( menu->AddItem( item ) )
+			{
+				err = B_NO_ERROR;
+			}
+			else
+			{
+				err = B_ERROR;
+			}
+		}
+		else
+		{
+			err = B_ERROR;
+		}
+	}
+	else
+	{
+		err = B_NO_ERROR;
+	}
+
+	return err;
+}
+
+// vi: set ts=4:

@@ -7,12 +7,15 @@
 
 class BLocker;
 class BBitmap;
+class BMenu;
 
 class DockItem
 {
 public:
 	virtual					~DockItem();
-	const BBitmap*			Bitmap( int32 size );
+	virtual status_t		BuildMenu( BMenu* menu );
+	virtual const BBitmap*	Bitmap( int32 size, bool hilite = false );
+
 	const char*				Label( void ) const;
 	status_t				SetName( const char* name );
 	status_t				SetLabel( const char* label );
@@ -23,11 +26,15 @@ public:
 protected:
 							DockItem( const char* name );
 	BLocker*				Locker( void );
+	BBitmap*				HiliteBitmap( BBitmap* bitmap );
 
 private:
 	BLocker					mLocker;
 	BBitmap*				mLargeBitmap;
 	BBitmap*				mSmallBitmap;
+	BBitmap*				mHilightenLargeBitmap;
+	BBitmap*				mHilightenSmallBitmap;
+	bool					mHilite;
 	BString					mName;
 	BString					mLabel;
 };
