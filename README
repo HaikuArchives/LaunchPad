@@ -126,6 +126,9 @@ Brandon Itkowitz
 Hr. Widing
 Patrick Lantz
 Trent Trautman
+Miguel Ferreira
+Andreas Wilcek
+Roger Andre Lassen
 
 I've tried to incorporate as many suggestions as I could, but some of
 the features are still not complete yet. I do keep all the suggestions
@@ -195,3 +198,5 @@ v1.1.0		7/22/97
 
 v1.0.0		6/12/97
 		- Initial revision.
+
+vi: set ts=4: $Id$
