@@ -9,7 +9,7 @@ INCLUDES = -I$(topsrcdir)/config
 CXXCOMPILE = $(CXX) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES)
 LINK = $(CXX)
 
-OBJS = src/Main.o src/LaunchPadApp.o src/LaunchPadWindow.o src/WindowDragger.o src/WindowTab.o src/TriStateButton.o src/LRowColumn.o src/PaneView.o src/DockItem.o src/EntryItem.o
+OBJS = src/Main.o src/LaunchPadApp.o src/LaunchPadWindow.o src/WindowDragger.o src/WindowTab.o src/TriStateButton.o src/LRowColumn.o src/PaneView.o src/DockItem.o src/EntryItem.o src/LThread.o
 RSRCS =
 
 .SUFFIXES:	.cpp .c .rsrc

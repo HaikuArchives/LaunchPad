@@ -7,7 +7,13 @@
 #include "PaneView.h"
 
 LaunchPadWindow::LaunchPadWindow( BRect frame, const char* title )
-:	BWindow( frame, title, B_BORDERED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL, 0 )
+:	BWindow(
+		frame,
+		title,
+		B_BORDERED_WINDOW_LOOK,
+		B_NORMAL_WINDOW_FEEL,
+		B_WILL_ACCEPT_FIRST_CLICK
+		) 
 {
 	frame.OffsetTo( B_ORIGIN );
 
