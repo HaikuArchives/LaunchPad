@@ -1,0 +1,11 @@
+$Id$
+
+Building LaunchPad From Source
+
+You need a source distribution of libprefs <version info here>, or better.
+E.g. if your libprefs distribution is at ../libprefs from within LaunchPad
+directory,
+
+./configure --with-libprefs=../libprefs
+make
+
