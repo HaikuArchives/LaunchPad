@@ -8,7 +8,6 @@
 
 #include <InterfaceDefs.h>
 
-
 extern rgb_color white;
 extern rgb_color ltGray;
 extern rgb_color mdGray;

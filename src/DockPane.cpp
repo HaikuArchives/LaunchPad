@@ -221,9 +221,13 @@ DockPane::MouseDown( BPoint p )
 	m->FindInt32( "buttons", (int32 *)&buttons ); 
 	m->FindInt64( "when", &when );
 #if 1
-	if ( buttons == B_PRIMARY_MOUSE_BUTTON ) {
+	if ( buttons == B_PRIMARY_MOUSE_BUTTON )
+	{
+		int32 clicks = m->FindInt32( "clicks" );
 		// Double click?
-		if ( (when-mLastTimeClicked) <= clickSpeed ) {
+		//if ( (when-mLastTimeClicked) <= clickSpeed )
+		if ( clicks == 2 )
+		{
 			DoubleClicked();
 			HighlightBitmap( false );
 			return;
@@ -313,6 +317,11 @@ DockPane::MouseMoved( BPoint, uint32 code, const BMessage *m )
 
 	if ( mBitmapHighlight != bitmapHighlightOld || mPaneHighlight != paneHighlightOld )
 		Invalidate();
+}
+
+void
+DockPane::MouseUp( BPoint p )
+{
 }
 
 void
