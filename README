@@ -1,0 +1,197 @@
+-------------------------------------------------------------------
+ LaunchPad v1.2.4
+ by Hiromasa Kato (hiro@eng.iastate.edu)
+-------------------------------------------------------------------
+
+LaunchPad is a simple Dock-like launcher.
+
+To download, go to
+
+http://www.eng.iastate.edu/~hiro/LaunchPad.html
+
+or BeWare ftp site at
+
+ftp://ftp.be.com/pub/contrib/util/LaunchPad123_ppc.zip
+ftp://ftp.be.com/pub/contrib/util/LaunchPad123_x86.zip
+
+
+INSTALLATION:
+
+ - Although LaunchPad runs just fine without libprefs.so, if there is
+   libprefs.so installed, it'll use it in favor of built-in static libprefs. This way,
+   as newer libprefs (or libprefs compliant preference system) becomes
+   available, you will automatically benefit from it. The latest libprefs.so
+   may be downloaded from
+
+	ftp://ftp.be.com/pub/contrib/libraries/libprefs***
+
+ - Unpack the LaunchPad***.zip and launch LaunchPad.
+
+ - You might want to launch LaunchPad at startup, if so,
+   in /boot/home/config/boot/UserBootScript put something like
+
+	if [ -f /boot/home/LaunchPad/LaunchPad ]
+	then
+		/boot/home/LaunchPad/LaunchPad &
+	fi
+
+   where you're going to have to change /boot/home/LaunchPad portion to
+   the directory you put LaunchPad in.
+
+
+USAGE:
+
+It's pretty simple, because it doesn't do much. :-) Simply drag any app,
+folder, file, etc. onto the panes. All the functionalities can be accessed
+through the pop-up menu, which shows up when you hold the
+primary mouse button for a while or immediately when you press
+the secondary mouse button. The dropped files are launched
+by double-clicking their icons, or through "Launch" (or "Open" if folder)
+menu from the pop-up menu.
+
+By default, i.e. when you first launch LaunchPad, there are
+eight empty panes. You can insert/remove panes. You can't remove
+a pane that already holds an item. You must first remove the file
+from the pane before you can remove the pane.
+
+If you drag a file over one of the panes, the pane will be highlighted
+(the pane's border will become blue). If that pane already holds an item,
+the dragged-over item will be opened by the item on the pane. If the
+pane is empty, the dragged-over item will be placed in it.
+
+Although the current version of LaunchPad does a better job at
+retrieving icons, you may encounter some glitches. For instance, if
+you try putting 'Disks' icon from the desktop, the icon will appear as a
+normal folder icon. But 'Disks' folder is anyway on the desktop all
+the time, you probably don't need to put that in LaunchPad.
+
+If you drop a symbolic link, LaunchPad will trace the linked-to file
+and grabs that file instead.
+
+NodeMonitor is *NOT* yet implemented. So if you move a file after
+dropping it onto LaunchPad, I don't know what's going to happen.
+
+If you have used LaunchPad 1.1.0 or earlier, this version will try to
+convert the old format settings. If you experience problems lauching
+and quiting LaunchPad, removing the old settings
+
+/boot/home/config/settings/_LP_x-vnd.HK-LaunchPad
+
+and starting over might solve the problem. (I know that's a lame suggestion to make, sigh)
+
+
+WHY DID I WRITE THIS?:
+
+I do appreciate the new Tracker's ability to put files on desktop. But quite often
+I found myself putting way too many sym links on desktop and not organizing
+them well. So, for me, some sort of constraints is badly needed to keep myself
+tidy. That's one reason I sometimes miss pre-DR9 era Dock. LaunchPad is not
+feature-rich, nor does it looks that good, but it does the job (at least for me :-)
+
+
+KNOWN FEATURES... UH... BUGS
+
+Absolutely nothing. This is a 100% pure bug-free software. If you think you found any,
+it's a freature, not a bug.
+
+oh well...
+
+I haven't experienced any serious bug so far. But I've been receiving several mails
+saying that LaunchPad crashes during boot. I haven't tracked down what's really
+causing these problems, but deleting ~/config/settings/_LP_x-vnd.HK-LaunchPad
+folder seemed to solve the problem for several people, (but not everyone who
+kindly reported the problem to me). This was because there was a possible race
+condition happening when quitting and saving settings. I fixed this bug, but there
+still may be some cases where it crashes during start-up. Please let me know
+if you encounter any problem.
+
+
+CREDITS:
+
+I'd like to thank Jon Watte for his libprefs library.
+
+LaunchPad uses PaletteWindow source code written by
+Steve Sprang, the author of PowerBar. Thanks Steve.
+
+And, I am greatly indebted to the following people for their valuable
+suggestions and bug reports:
+
+Frederic Tessier
+Olivier Wittenberg
+Goro Kiyono
+Sebastien Bouchex
+Matthew Schinkel
+Danan Jay Sudindranath
+Brandon Itkowitz
+Hr. Widing
+Patrick Lantz
+Trent Trautman
+
+I've tried to incorporate as many suggestions as I could, but some of
+the features are still not complete yet. I do keep all the suggestions
+and am trying to implement them, so the features missing in this release
+will hopefully come with the later versions.
+
+
+IMPROVEMENTS PLANNED:
+
+The followings are some of the features that I want to incorporate in the future,
+not necessarily in the order of importance nor priority. Suggestions are greatly
+appreciated.
+
+- Giving users a choice of single-click or double-click launch.
+- More customizable appearance.
+- Labels for each docked item.
+- Support for PowerBar/BeBar-like add-on modules. (with R3 came much more sophisticated
+  replicant support. So this feature will be implemented by making LaunchPad a BShelf)
+- Docks within docks. Something like what Afterstep Wharf does.
+- Kerboard navigation, short-cuts.
+
+As you might notice, some of the above items are very trivial, the reason why they're not
+implemented as of this release is simply 'cause I'm lazy and a lame coder. Keep bugging
+me if you desparately need some feautures added. Meanwhile, I'll release the source code
+and put it on the web with the version 2. For the time being, I'll send you source files if you
+contact me directly. The source code is getting very messy right now, so I don't just want
+to put them online as it might show a bad example of BeOS apps.
+
+
+CONTACT:
+
+Hiromasa Kato (hiro@eng.iastate.edu)
+http://www.eng.iastate.edu/~hiro/LaunchPad.html
+
+
+REVISION HISTORY:
+
+v1.2.4		12/21/98
+		- Recompiled for R4 Intel
+
+v1.2.3		5/6/98
+		- Simultaneous release of PowerPC&Intel binaries.
+		- Fixed the version info in the About box.
+
+v1.2.2		4/20/98
+		- Ported (okay, just a simple recompilation) to R3 for Intel.
+		- Fixed a bug with moving windows with both right and left mouse buttons held.
+		- Fixed a bug so that multiple items can be now correctly dropped and forwarded
+		  to docked items.
+
+v1.2.1		12/9/97
+		- Fixed a bug that caused unsaved settings when quiting.
+
+v1.2.0		12/6/97
+		- You can now have multiple instances of LaunchPad strips.
+		- Folders can now be navigated much like you do it in Tracker.
+		- Fixed a very stupid bug that caused malloc error when quitting.
+		- A little bit better icon handling. But this is only because some of the special
+		  icons are hard-coded, (bummer!).
+
+v1.1.0		7/22/97
+		- You can now put folders and actually open them.
+		- Somewhat better icon retrieving.
+		- Allows horizontal/vertical placement of panes.
+		- Static version of libprefs is included, just in case
+		  libpref.so is not installed
+
+v1.0.0		6/12/97
+		- Initial revision.
