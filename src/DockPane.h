@@ -9,7 +9,6 @@
 #include <PopUpMenu.h>
 #include "DockItem.h"
 #include "LaunchPadDefs.h"
-#include "LClickFilter.h"
 
 const float kBitmapPaddingL = 5;
 const float kBitmapPaddingS = 5;
@@ -80,7 +79,6 @@ private:
 	uint32				mPaneAppearance;
 	BPopUpMenu*			mPopUpOnBitmap;
 	BPopUpMenu*			mPopUpOnPaneArea;
-	LClickFilter*		mClickFilter;
 	static bool			mEnableSingleClick;
 	bool				mTracking;
 	BPoint				mHotSpot;

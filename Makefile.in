@@ -17,3 +17,6 @@ clean-recursive:
 	for subdir in $$list; do \
 		(cd $$subdir && make clean); \
 	done
+
+Makefile src/Makefile:	Makefile.in src/Makefile.in
+	config.status

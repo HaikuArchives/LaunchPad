@@ -5,8 +5,8 @@
 #include "LaunchPadApp.h"
 #include "LaunchPadDefs.h"
 #include "PrefHandler.h"
-#include "GUITabView.h"
-#include <Alert.h>
+#include <be/interface/Alert.h>
+#include <be/app/Roster.h>
 #include <stdio.h>
 
 LaunchPadApp::LaunchPadApp()
@@ -89,10 +89,6 @@ void
 LaunchPadApp::MessageReceived( BMessage* message )
 {
 	BMessage*	padSetting;
-#if DEBUG
-	PRINT(( "%s::MessageReceived\n", class_name( this ) ));
-	message->PrintToStream();
-#endif
 
 	switch ( message->what ) {
 	case kMsgCreateNewPad:
@@ -241,3 +237,5 @@ GetAppVersion( version_info* version )
 	afi.SetTo(&file);
 	afi.GetVersionInfo( version, B_APP_VERSION_KIND );
 }
+
+// vi: set ts=4:

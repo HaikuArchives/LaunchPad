@@ -1,13 +1,14 @@
-//
+// $Id$
 // DockItem.cpp
 //
 
 #include "DockItem.h"
 #include "colors.h"
-#include <Debug.h>
+#include <be/support/Debug.h>
 #include <StorageKit.h>
-#include <AppFileInfo.h>
-#include <Screen.h>
+#include <be/storage/AppFileInfo.h>
+#include <be/app/Roster.h>
+#include <be/interface/Screen.h>
 #include <stdio.h>
 
 const BRect kLargeIconRect(0,0,31,31);

@@ -13,8 +13,6 @@ ac_default_prefix=/usr/local
 # Any additions from configure.in:
 ac_help="$ac_help
  --with-libprefs=PATH	path to the libprefs distribution  "
-ac_help="$ac_help
- --with-libbuta=PATH	path to the libbuta distribution  "
 
 # Initialize some variables set by options.
 # The variables have the same names as the options, with
@@ -527,15 +525,20 @@ fi
 
 
 echo $ac_n "checking BeOS Release ""... $ac_c" 1>&6
-echo "configure:531: checking BeOS Release " >&5
+echo "configure:529: checking BeOS Release " >&5
 release=$(uname -r | sed 's/\([^\.]*\)\..*/\1/')
-if test "$release" = "4"; then
-	echo "$ac_t""R4 " 1>&6
-	BEOSRELEASE="4"
-else
-	echo "$ac_t""not R4 " 1>&6
-	{ echo "configure: error: BeOS Release 4 is required " 1>&2; exit 1; }
-fi
+case "$release" in
+	5)
+		echo "$ac_t""post-R4 " 1>&6
+		;;
+	4)
+		echo "$ac_t""post-R4 " 1>&6
+		;;
+	*)
+		echo "$ac_t""not R4 " 1>&6
+		{ echo "configure: error: BeOS Release 4 is required " 1>&2; exit 1; }
+		;;
+esac
 
 # Check whether --with-libprefs or --without-libprefs was given.
 if test "${with_libprefs+set}" = set; then
@@ -544,7 +547,7 @@ if test "${with_libprefs+set}" = set; then
 fi
 
 echo $ac_n "checking libprefs ""... $ac_c" 1>&6
-echo "configure:548: checking libprefs " >&5
+echo "configure:551: checking libprefs " >&5
 if test "x$with_libprefs" = "x"; then
 	{ echo "configure: error: specify --with-libprefs=PATH " 1>&2; exit 1; }
 else
@@ -557,29 +560,6 @@ fi
 echo "$ac_t""$LIBPREFSDIR " 1>&6
 if ! test -d $LIBPREFSDIR; then
 	{ echo "configure: error: couldn't find $LIBPREFSDIR " 1>&2; exit 1; }
-fi
-
-
-# Check whether --with-libbuta or --without-libbuta was given.
-if test "${with_libbuta+set}" = set; then
-  withval="$with_libbuta"
-  :
-fi
-
-echo $ac_n "checking libbuta ""... $ac_c" 1>&6
-echo "configure:571: checking libbuta " >&5
-if test "x$with_libbuta" = "x"; then
-	{ echo "configure: error: specify --with-libbuta=PATH " 1>&2; exit 1; }
-else
-	if ( echo $with_libbuta | grep '^\/' ); then
-		LIBBUTADIR=$with_libbuta
-	else
-		LIBBUTADIR=$(pwd)/$with_libbuta
-	fi
-fi
-echo "$ac_t""$LIBBUTADIR " 1>&6
-if ! test -d $LIBBUTADIR; then
-	{ echo "configure: error: couldn't find $LIBBUTADIR " 1>&2; exit 1; }
 fi
 
 
@@ -728,7 +708,6 @@ s%@oldincludedir@%$oldincludedir%g
 s%@infodir@%$infodir%g
 s%@mandir@%$mandir%g
 s%@LIBPREFSDIR@%$LIBPREFSDIR%g
-s%@LIBBUTADIR@%$LIBBUTADIR%g
 
 CEOF
 EOF

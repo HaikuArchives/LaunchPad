@@ -6,11 +6,12 @@
 #include "colors.h"
 #include "LaunchPadWindow.h"
 #include "LTrackerMenu.h"
-#include <Path.h>
-#include <Entry.h>
-#include <AppFileInfo.h>
-#include <PopUpMenu.h>
-#include <MenuItem.h>
+#include <be/storage/Path.h>
+#include <be/storage/Entry.h>
+#include <be/storage/AppFileInfo.h>
+#include <be/interface/PopUpMenu.h>
+#include <be/interface/MenuItem.h>
+#include <be/app/Roster.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -480,7 +481,7 @@ DockPane::Launch( BMessage* droppedMsg )
 	if ( droppedMsg != NULL
 			&& ( droppedMsg->GetInfo( "refs", &typeFound, &countFound ) ) == B_OK
 			&& typeFound == B_REF_TYPE ) {
-		BMessage	msg( droppedMsg );
+		BMessage	msg( *droppedMsg );
 		msg.what = B_REFS_RECEIVED;
 		be_roster->Launch( &ref, &msg );
 	} else {

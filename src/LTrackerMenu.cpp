@@ -1,5 +1,4 @@
-//
-// LTrackerMenu.cpp
+// $Id$
 //
 
 #include <Debug.h>
@@ -32,7 +31,6 @@ LTrackerMenu::~LTrackerMenu()
 void
 LTrackerMenu::AttachedToWindow( void )
 {
-	PRINT(( "%s::AttachedToWindow\n", class_name(this) ));
 	if ( !mIsValid ) {
 		ScanFolder();
 		SetTargetForItems( Superitem()->Target() );
@@ -71,7 +69,7 @@ LTrackerMenu::ScanFolder( void )
 	} else {
 		while ( folder.GetNextRef( &itemRef ) != B_ENTRY_NOT_FOUND ) {
 			node.SetTo( &itemRef );
-			BMessage* msg = new BMessage( Superitem()->Message() );
+			BMessage* msg = new BMessage( *Superitem()->Message() );
 			msg->RemoveName( "refs" );
 			msg->AddRef( "refs", &itemRef );
 			if ( node.IsDirectory() ) {
@@ -106,7 +104,7 @@ LTrackerMenu::BuildMenu( const entry_ref* ref, BMessage* message, BHandler* targ
 
 	LTrackerMenu* subMenu = new LTrackerMenu( (entry_ref*)ref );
 	subMenu->SetFont( be_plain_font );
-	BMessage* msg = new BMessage( message );
+	BMessage* msg = new BMessage( *message );
 	msg->AddRef( "refs", ref );
 	LTrackerMenuItem* item = new LTrackerMenuItem( ref, subMenu, msg );
 	item->SetTarget( target );
@@ -232,3 +230,5 @@ status_t BuildNavMenu( BMenu* top, const entry_ref* ref, BMessage* message, BHan
 	return B_NO_ERROR;
 }
 #endif
+
+// vi: set ts=4:

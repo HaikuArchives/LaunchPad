@@ -1,4 +1,4 @@
-//
+// $Id$
 // LaunchPadView.cpp
 //
 
@@ -75,11 +75,6 @@ void
 LaunchPadView::MessageReceived( BMessage* m )
 {
 	DockPane* pane;
-
-#if defined(DEBUG)
-	puts( class_name( this ) );
-	m->PrintToStream();
-#endif
 
 	switch ( m->what ) {
 	case kMsgChangeDisplayMode:
