@@ -209,7 +209,8 @@ WindowTab::MouseDown( BPoint p )
 		else
 		{
 			SetMouseEventMask( B_POINTER_EVENTS, B_NO_POINTER_HISTORY );
-			mHotSpot = p;
+			ConvertToScreen( &p );
+			mHotSpot = p - Window()->Frame().LeftTop();
 			mIsTracking = true;
 		}
 	}
