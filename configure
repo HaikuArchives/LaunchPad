@@ -578,7 +578,7 @@ cat >> confdefs.h <<EOF
 EOF
 
 cat >> confdefs.h <<EOF
-#define LAUNCHPAD_VERSION_INTERNAL 1 1
+#define LAUNCHPAD_VERSION_INTERNAL 1
 EOF
 
 
