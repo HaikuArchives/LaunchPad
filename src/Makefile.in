@@ -6,9 +6,9 @@ include $(top_srcdir)/Makefile.header
 
 LIBPREFSDIR = @LIBPREFSDIR@
 
-CFLAGS = -I$(top_srcdir)/config -I$(LIBPREFSDIR)/src
-CXXFLAGS = $(CFLAGS)
-LDFLAGS = $(LIBS)
+CFLAGS += -I$(top_srcdir)/config -I$(LIBPREFSDIR)/src
+CXXFLAGS += $(CFLAGS)
+LDFLAGS += $(LIBS)
 
 SRCS =	LaunchPadApp.cpp	\
 	LaunchPadWindow.cpp	\
@@ -33,7 +33,7 @@ depend:
 	$(DEPEND) $(SRCS) > .depend
 
 LaunchPad:	$(OBJS)
-	$(LD) -Xlinker -soname=_APP_ $(OBJS) $(LDFLAGS) -o $@
+	$(LD) -o $@ $(OBJS) $(LDFLAGS)
 	$(XRES) -o $@ $(RSRCS)
 	setversion $@ -app $(VERSION_MAJOR) $(VERSION_MIDDLE) $(VERSION_MINOR) \
 		$(VERSION_VARIETY) $(VERSION_INTERNAL) \

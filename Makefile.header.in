@@ -3,17 +3,20 @@
 x86_CC = gcc
 x86_CXX = g++
 x86_LD = g++
+x86_LDFLAGS = -Xlinker -soname=_APP_
 x86_DEPEND = $(CC) $(CFLAGS) -MM
 
 ppc_CC = mwcc
 ppc_CXX = mwcc
-ppc_LD = mwcc
+ppc_LD = mwld
+ppc_LDFLAGS =
 ppc_DEPEND = $(CC) $(CFLAGS) -make
 
 CPU = @CPU@
 CC = $($(CPU)_CC)
 CXX = $($(CPU)_CXX)
 LD = $($(CPU)_LD)
+LDFLAGS = $($(CPU)_LDFLAGS)
 DEPEND = $($(CPU)_DEPEND)
 MIMESET = mimeset
 XRES = xres
