@@ -14,15 +14,15 @@ fi
 dnl -------------------------------------------------------------------
 dnl Check for libprefs source distribution
 dnl -------------------------------------------------------------------
-AC_ARG_WITH( libprefsdir, [ --with-libprefsdir=PATH	path to the libprefs distribution ] )
+AC_ARG_WITH( libprefs, [ --with-libprefs=PATH	path to the libprefs distribution ] )
 AC_MSG_CHECKING( [libprefs] )
-if test "x$with_libprefsdir" = "x"; then
-	AC_MSG_ERROR( [specify --with-libprefsdir=PATH] )
+if test "x$with_libprefs" = "x"; then
+	AC_MSG_ERROR( [specify --with-libprefs=PATH] )
 else
-	if ( echo $with_libprefsdir | grep '^\/' ); then
-		LIBPREFSDIR=$with_libprefsdir
+	if ( echo $with_libprefs | grep '^\/' ); then
+		LIBPREFSDIR=$with_libprefs
 	else
-		LIBPREFSDIR=$(pwd)/$with_libprefsdir
+		LIBPREFSDIR=$(pwd)/$with_libprefs
 	fi
 fi
 AC_MSG_RESULT( $LIBPREFSDIR )
@@ -34,15 +34,15 @@ AC_SUBST(LIBPREFSDIR)
 dnl -------------------------------------------------------------------
 dnl Check for libprefs source distribution
 dnl -------------------------------------------------------------------
-AC_ARG_WITH( libbutadir, [ --with-libbutadir=PATH	path to the libbuta distribution ] )
+AC_ARG_WITH( libbuta, [ --with-libbuta=PATH	path to the libbuta distribution ] )
 AC_MSG_CHECKING( [libbuta] )
-if test "x$with_libbutadir" = "x"; then
-	AC_MSG_ERROR( [specify --with-libbutadir=PATH] )
+if test "x$with_libbuta" = "x"; then
+	AC_MSG_ERROR( [specify --with-libbuta=PATH] )
 else
-	if ( echo $with_libbutadir | grep '^\/' ); then
-		LIBBUTADIR=$with_libbutadir
+	if ( echo $with_libbuta | grep '^\/' ); then
+		LIBBUTADIR=$with_libbuta
 	else
-		LIBBUTADIR=$(pwd)/$with_libbutadir
+		LIBBUTADIR=$(pwd)/$with_libbuta
 	fi
 fi
 AC_MSG_RESULT( $LIBBUTADIR )
@@ -51,5 +51,5 @@ if ! test -d $LIBBUTADIR; then
 fi
 AC_SUBST(LIBBUTADIR)
 
-AC_OUTPUT( Makefile src/Makefile )
+AC_OUTPUT( config.h Makefile src/Makefile )
 
