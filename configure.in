@@ -1,0 +1,55 @@
+AC_INIT( src/LaunchPadApp.cpp )
+
+dnl Check for BeOS R4
+AC_MSG_CHECKING( [BeOS Release] )
+release=[$(uname -r | sed 's/\([^\.]*\)\..*/\1/')]
+if test "$release" = "4"; then
+	AC_MSG_RESULT( [R4] )
+	BEOSRELEASE="4"
+else
+	AC_MSG_RESULT( [not R4] )
+	AC_MSG_ERROR( [BeOS Release 4 is required] )
+fi
+
+dnl -------------------------------------------------------------------
+dnl Check for libprefs source distribution
+dnl -------------------------------------------------------------------
+AC_ARG_WITH( libprefsdir, [ --with-libprefsdir=PATH	path to the libprefs distribution ] )
+AC_MSG_CHECKING( [libprefs] )
+if test "x$with_libprefsdir" = "x"; then
+	AC_MSG_ERROR( [specify --with-libprefsdir=PATH] )
+else
+	if ( echo $with_libprefsdir | grep '^\/' ); then
+		LIBPREFSDIR=$with_libprefsdir
+	else
+		LIBPREFSDIR=$(pwd)/$with_libprefsdir
+	fi
+fi
+AC_MSG_RESULT( $LIBPREFSDIR )
+if ! test -d $LIBPREFSDIR; then
+	AC_MSG_ERROR( [couldn't find $LIBPREFSDIR] )
+fi
+AC_SUBST(LIBPREFSDIR)
+
+dnl -------------------------------------------------------------------
+dnl Check for libprefs source distribution
+dnl -------------------------------------------------------------------
+AC_ARG_WITH( libbutadir, [ --with-libbutadir=PATH	path to the libbuta distribution ] )
+AC_MSG_CHECKING( [libbuta] )
+if test "x$with_libbutadir" = "x"; then
+	AC_MSG_ERROR( [specify --with-libbutadir=PATH] )
+else
+	if ( echo $with_libbutadir | grep '^\/' ); then
+		LIBBUTADIR=$with_libbutadir
+	else
+		LIBBUTADIR=$(pwd)/$with_libbutadir
+	fi
+fi
+AC_MSG_RESULT( $LIBBUTADIR )
+if ! test -d $LIBBUTADIR; then
+	AC_MSG_ERROR( [couldn't find $LIBBUTADIR] )
+fi
+AC_SUBST(LIBBUTADIR)
+
+AC_OUTPUT( Makefile src/Makefile )
+

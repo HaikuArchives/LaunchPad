@@ -1,0 +1,19 @@
+# $Id$
+
+SUBDIRS = src
+
+all::	all-recursive
+
+clean:	clean-recursive
+
+all-recursive:
+	@list='$(SUBDIRS)'; \
+	for subdir in $$list; do \
+		(cd $$subdir && make); \
+	done
+
+clean-recursive:
+	@list='$(SUBDIRS)'; \
+	for subdir in $$list; do \
+		(cd $$subdir && make clean); \
+	done
