@@ -21,9 +21,9 @@ INSTALLATION:
 
  - Although LaunchPad runs just fine without libprefs.so, if there is
    libprefs.so installed, it'll use it in favor of built-in static libprefs.
-   This way, as newer libprefs (or libprefs compliant preference system) becomes
-   available, you will automatically benefit from it. The latest libprefs
-   distribution may be downloaded from www.b500.com.
+   This way, as newer libprefs (or libprefs compliant preference system)
+   becomes available, you will automatically benefit from it. The latest
+   libprefs distribution may be downloaded from www.b500.com.
 
  - Unpack the LaunchPad***.zip and launch LaunchPad.
 
@@ -43,11 +43,10 @@ USAGE:
 
 It's pretty simple, because it doesn't do much. :-) Simply drag any app,
 folder, file, etc. onto the panes. All the functionalities can be accessed
-through the pop-up menu, which shows up when you hold the
-primary mouse button for a while or immediately when you press
-the secondary mouse button. The dropped files are launched
-by double-clicking their icons, or through "Launch" (or "Open" if folder)
-menu from the pop-up menu.
+through the pop-up menu, which shows up when you hold the primary mouse
+button for a while or immediately when you press the secondary mouse button.
+The dropped files are launched by double-clicking their icons, or through
+"Launch" (or "Open" if folder) menu from the pop-up menu.
 
 By default, i.e. when you first launch LaunchPad, there are
 eight empty panes. You can insert/remove panes. You can't remove
@@ -77,7 +76,8 @@ and quiting LaunchPad, removing the old settings
 
 /boot/home/config/settings/_LP_x-vnd.HK-LaunchPad
 
-and starting over might solve the problem. (I know that's a lame suggestion to make, sigh)
+and starting over might solve the problem. (I know that's a lame suggestion to
+make, sigh)
 
 
 WHY DID I WRITE THIS?:
