@@ -166,7 +166,7 @@ Hiromasa Kato (hiro@eng.iastate.edu)
 
 REVISION HISTORY:
 
-v1.3.0		??/??/2000
+v1.3.0		7/16/2000
 	- Released under BSD-like license. Somebody please come up with a cool
 	  organization name to put into it.
 	- Window dragging and mouse event handling are both async now. These were
