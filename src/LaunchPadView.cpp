@@ -23,7 +23,6 @@ LaunchPadView::LaunchPadView(	BRect		frame,
 
 	mDragger = new BDragger( frame, this, B_FOLLOW_NONE, B_WILL_DRAW );
 	mDockHolder = new GUIRowColumn( frame, "DockHolder", orientation, B_FOLLOW_NONE, B_WILL_DRAW );
-//	AddChild( mDragger );
 	AddChild( mDockHolder );
 
 	SetPaneAppearance( padSetting->FindInt32( "PaneAppearance" ) );
@@ -32,12 +31,24 @@ LaunchPadView::LaunchPadView(	BRect		frame,
 	DockPane*	newPane;
 	entry_ref	ref;
 	BMessage	paneSetting;
-	for ( int i = 0; i < padSetting->FindInt32( "NumberOfPanes" ); i++ ) {
+	for ( int i = 0; i < padSetting->FindInt32( "NumberOfPanes" ); i++ )
+	{
 		padSetting->FindMessage( "PaneSetting", i, &paneSetting );
 		newPane = new DockPane( BPoint(0,0), PaneAppearance() );
-		if ( paneSetting.FindInt32( "PaneContentType" ) == kPaneTypeEntryRef ) {
-			paneSetting.FindRef( "EntryRefs", &ref );
-			newPane->SetTo( &ref );
+		if ( paneSetting.FindInt32( "PaneContentType" ) == kPaneTypeEntryRef )
+		{
+			const char* path = paneSetting.FindString( "Paths" );
+			if ( path )
+			{
+				PRINT(( "path = %s\n", path ));
+				newPane->SetTo( path );
+			}
+			else
+			{
+				// for evil brain dead pref format that saves entry_ref.
+				paneSetting.FindRef( "EntryRefs", &ref );
+				newPane->SetTo( &ref );
+			}
 		}
 		mDockHolder->AddChild( newPane );
 	}

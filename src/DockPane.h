@@ -14,6 +14,8 @@
 const float kBitmapPaddingL = 5;
 const float kBitmapPaddingS = 5;
 
+class BPath;
+
 class DockPane : public BControl
 {
 public:
@@ -32,7 +34,9 @@ public:
 	virtual void		MouseUp( BPoint p );
 
 	void				DroppedToOtherPane( void );	// called from peer panes.
-	void				SetTo( const entry_ref *ref );
+	void				SetTo( const entry_ref* ref );
+	void				SetTo( const char* ref );
+	void				GetPath( BPath* path );
 	void				GetRef( entry_ref *ref ) const;
 	bool				HasRef( void );
 	const char*			Caption( void ) const

@@ -144,7 +144,8 @@ LaunchPadWindow::RelocateMyselfIfNeeded( void )
 status_t
 LaunchPadWindow::GetSetting( BMessage* padSetting )
 {
-	if ( Lock() ) {
+	if ( Lock() )
+	{
 		padSetting->AddRect( "Frame", Frame() );
 		padSetting->AddInt32( "NumberOfPanes", mPadView->CountPanes() );
 		padSetting->AddInt32( "PaneAppearance", mPadView->PaneAppearance() );
@@ -152,19 +153,34 @@ LaunchPadWindow::GetSetting( BMessage* padSetting )
 		for ( int i = 0; i < mPadView->CountPanes(); i++ ) {
 			BMessage	paneSetting;
 			DockPane*	pane = mPadView->PaneAt(i);
-			if ( pane->HasRef() ) {
+			if ( pane->HasRef() )
+			{
+				paneSetting.AddInt32( "PaneContentType", kPaneTypeEntryRef );
+
+#ifdef EVIL_PREF_FORMAT_COMPATIBILITY
 				entry_ref	ref;
 				pane->GetRef( &ref );
-				paneSetting.AddInt32( "PaneContentType", kPaneTypeEntryRef );
 				paneSetting.AddRef( "EntryRefs", &ref );
-			} else {
+#endif
+
+				BPath path;
+				pane->GetPath( &path );
+				paneSetting.AddString( "Paths", path.Path() );
+			}
+			else
+			{
 				paneSetting.AddInt32( "PaneContentType", kPaneTypeEmpty );
 			}
+#if DEBUG
+			paneSetting.PrintToStream();
+#endif
 			padSetting->AddMessage( "PaneSetting", &paneSetting );
 		}
 		Unlock();
 		return B_NO_ERROR;
-	} else {
+	}
+	else
+	{
 		BAlert*	errorDialog = new BAlert(	"",
 											"Couldn't lock window",
 											"", "", "Continue",

@@ -1,4 +1,4 @@
-//
+// $Id$
 // LaunchPadApp.cpp
 //
 
@@ -80,7 +80,7 @@ LaunchPadApp::ReadyToRun( void )
 		launchPadWindow = new LaunchPadWindow(	padSetting.FindRect( "Frame" ),
 												name,
 												tabOrientation,
-												&padSetting							 );
+												&padSetting );
 		launchPadWindow->Show();
 	}
 }

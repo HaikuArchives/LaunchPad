@@ -19,7 +19,6 @@ PrefHandler::PrefHandler()
 	:	mPref( LAUNCH_PAD_SIGNATURE_MINOR ),
 		mPrefSet( mPref, "settings", true )
 {
-	PRINT(( "PrefHandler ctor enter\n" ));
 	if ( mPref.InitCheck() ) {
 		ErrorDialog( "Cannot initialize Preferences" );
 		return;
@@ -45,17 +44,18 @@ PrefHandler::Save( BMessage* settings )
 	::GetAppVersion( &version );
 
 	// Save the settings
-#if defined(DEBUG)
-	puts( "Saving" );
-	printf( "Version %d.%d.%d\n", version.major, version.middle, version.minor );
-#endif
 	mPrefSet.Delete( "Version" );
 	mPrefSet.Delete( "LaunchPadSettings" );
-	if ( mPrefSet.SetData( "Version", &version, sizeof(version_info), B_RAW_TYPE ) ) {
+	if ( mPrefSet.SetData( "Version", &version, sizeof(version_info), B_RAW_TYPE ) )
+	{
 		ErrorDialog( "Cannot set Version setting" );
-	} else if ( SetMessage( "LaunchPadSettings", settings ) ) {
+	}
+	else if ( SetMessage( "LaunchPadSettings", settings ) )
+	{
 		ErrorDialog( "Cannot set settings" );
-	} else if ( mPrefSet.Save() ) {
+	}
+	else if ( mPrefSet.Save() )
+	{
 		ErrorDialog( "Cannot save setting" );
 	}
 
@@ -72,9 +72,7 @@ status_t
 PrefHandler::Load( void )
 {
 	GetVersion();
-#if defined(DEBUG)
-	printf( "Loading Version %d.%d.%d setting..\n", Version().major, Version().middle, Version().minor );
-#endif
+	PRINT(( "Loading Version %d.%d.%d setting..\n", Version().major, Version().middle, Version().minor ));
 	if ( Version().major == 1 && Version().middle <= 1 ) {
 		LoadObsoleteSetting();
 	} else {
@@ -83,9 +81,6 @@ PrefHandler::Load( void )
 			puts( "Default setting" );
 			GetDefaultSettings( mSettings );
 		}
-#if defined(DEBUG)
-		mSettings->PrintToStream();
-#endif
 	}
 
 	return B_OK;
@@ -94,9 +89,7 @@ PrefHandler::Load( void )
 status_t
 PrefHandler::LoadObsoleteSetting( void )
 {
-#if defined(DEBUG)
-	puts( "Loading pre-1.1 LaunchPad settings" );
-#endif
+	PRINT(( "Loading pre-1.1 LaunchPad settings" ));
 	BAlert* alert = new BAlert(	"", "A settings file "
 								"created probably by the pre-1.1 version "
 								"of LaunchPad was found. I'll convert the settings "
@@ -106,7 +99,7 @@ PrefHandler::LoadObsoleteSetting( void )
 								"OK" );
 	alert->Go();
 
-	// pre-1.1.0 version ony has one pad
+	// pre-1.1.0 version has only one pad
 	mSettings = new BMessage( kMsgSettings );
 	mSettings->AddInt32( "NumberOfPads", 1 );
 	

@@ -562,6 +562,30 @@ DockPane::SetTo( const entry_ref *ref )
 }
 
 void
+DockPane::SetTo( const char* path )
+{
+	BEntry entry( path );
+	if ( entry.InitCheck() < B_OK ) return;
+
+	entry_ref ref;
+	entry.GetRef( &ref );
+	SetTo( &ref );
+}
+
+void
+DockPane::GetPath( BPath* path )
+{
+	entry_ref ref;
+	GetRef( &ref );
+
+	BEntry entry( &ref );
+	if ( entry.InitCheck() == B_OK )
+	{
+		entry.GetPath( path );
+	}
+}
+
+void
 DockPane::GetRef( entry_ref *ref ) const
 {
 	mDockItem->GetRef( ref );

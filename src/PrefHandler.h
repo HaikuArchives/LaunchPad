@@ -14,7 +14,7 @@
 // Obsolete data used in pre-1.1.0 version.
 struct PaneInfo { 
 	bool	hasItem;
-	char	path[300];
+	char	path[300]; // geez, obviously I was clueless. Why 300? What was I thinking?
 };
 
 // PrefHandler
