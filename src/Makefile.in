@@ -30,7 +30,7 @@ LIBS = $(LIBPREFSDIR)/bigprefs.$(CPU).a -lbe
 all:	LaunchPad
 
 depend:
-	$(DEPEND) $(SRCS) > .depend
+	$(DEPEND) $(SRCS) $(DEPENDFILTER) > .depend
 
 LaunchPad:	$(OBJS)
 	$(LD) -o $@ $(OBJS) $(LDFLAGS)
