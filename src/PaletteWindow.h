@@ -32,9 +32,9 @@ private:
 class WindowTab : public BControl
 {
 public:
-						WindowTab(	BRect r,
-									uint32 mode = B_HORIZONTAL,
-									BView *view = NULL );
+						WindowTab(	BRect	r,
+									uint32	mode = B_HORIZONTAL,
+									BView*	view = NULL );
 						WindowTab(	BPoint	leftTop,
 									uint32	mode = B_HORIZONTAL,
 									BView*	view = NULL	);
@@ -43,6 +43,10 @@ public:
 	virtual void		Draw( BRect r );
 	virtual void		GetPreferredSize( float *w, float *h );
 	virtual void		MouseDown( BPoint p );
+	virtual void		MouseMoved(	BPoint			point,
+									uint32			transit,
+									const BMessage*	message );
+	virtual void		MouseUp( BPoint p );
 
 	void				SetTargetView( BView *view );
 	void				SetMode( uint32 mode )
@@ -61,8 +65,8 @@ private:
 	uint32				mOrientation;
 	BView*				mTargetView;
 	CloseButton*		mCloseButton;
-	BPoint				mDragPoint;
-	uint64				mLastTimeClicked;
+	BPoint				mHotSpot;
+	bool				mIsTracking;
 };
 
 class PaletteWindow : public BWindow
