@@ -16,6 +16,8 @@ The development site is at
 
 http://sourceforge.net/projects/launchpad/
 
+where you can get information on the public CVS repository and many more.
+
 
 INSTALLATION:
 
@@ -41,12 +43,13 @@ INSTALLATION:
 
 USAGE:
 
-It's pretty simple, because it doesn't do much. :-) Simply drag any app,
-folder, file, etc. onto the panes. All the functionalities can be accessed
-through the pop-up menu, which shows up when you hold the primary mouse
-button for a while or immediately when you press the secondary mouse button.
-The dropped files are launched by double-clicking their icons, or through
-"Launch" (or "Open" if folder) menu from the pop-up menu.
+It's pretty simple, because it doesn't do much. :-) Simply drag and drop
+any app, folder, file, etc. onto the panes. All the functionalities can
+be accessed through the pop-up menu, which shows up when you hold the
+primary mouse button for a while or immediately when you press the
+secondary mouse button. These items can be invoked by a single click.
+If it's a file, it gets opened by its preferred app, or if it's a folder
+the Tracker opens it.
 
 By default, i.e. when you first launch LaunchPad, there are
 eight empty panes. You can insert/remove panes. You can't remove
@@ -54,18 +57,12 @@ a pane that already holds an item. You must first remove the file
 from the pane before you can remove the pane.
 
 If you drag a file over one of the panes, the pane will be highlighted
-(the pane's border will become blue). If that pane already holds an item,
+(the pane's border will become blue). If it already holds an item,
 the dragged-over item will be opened by the item on the pane. If the
 pane is empty, the dragged-over item will be placed in it.
 
-Although the current version of LaunchPad does a better job at
-retrieving icons, you may encounter some glitches. For instance, if
-you try putting 'Disks' icon from the desktop, the icon will appear as a
-normal folder icon. But 'Disks' folder is anyway on the desktop all
-the time, you probably don't need to put that in LaunchPad.
-
 If you drop a symbolic link, LaunchPad will trace the linked-to file
-and grabs that file instead.
+and grab that file instead.
 
 NodeMonitor is *NOT* yet implemented. So if you move a file after
 dropping it onto LaunchPad, I don't know what's going to happen.
@@ -76,8 +73,8 @@ and quiting LaunchPad, removing the old settings
 
 /boot/home/config/settings/_LP_x-vnd.HK-LaunchPad
 
-and starting over might solve the problem. (I know that's a lame suggestion to
-make, sigh)
+and starting over might solve the problem. (I know that's a lame
+suggestion, sigh)
 
 
 WHY DID I WRITE THIS?:
@@ -134,6 +131,7 @@ Miguel Ferreira
 Andreas Wilcek
 Roger Andre Lassen
 Will Bierbaum
+Jonas Sundstrom
 
 I've tried to incorporate as many suggestions as I could, but some of
 the features are still not complete yet. I do keep all the suggestions
