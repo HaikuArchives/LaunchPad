@@ -1,3 +1,4 @@
+dnl $Id$
 AC_INIT( src/LaunchPadApp.cpp )
 
 dnl Check for BeOS R4
