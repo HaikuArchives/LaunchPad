@@ -1,0 +1,10 @@
+$Id: INSTALL,v 1.2 2000/07/06 04:04:05 hiromasa Exp $
+
+Building LaunchPad From Source Distribution
+
+You need a source distribution of libprefs <version info here>, or better,
+available from www.b500.com. E.g. if your libprefs distribution is at
+../libprefs from within LaunchPad directory,
+
+./configure --with-libprefs=../libprefs
+make

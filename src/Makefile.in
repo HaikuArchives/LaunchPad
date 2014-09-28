@@ -1,0 +1,49 @@
+# $Id: Makefile.in,v 1.5 2000/07/10 06:54:30 hiromasa Exp $
+
+top_srcdir = @top_srcdir@
+
+include $(top_srcdir)/Makefile.header
+
+LIBPREFSDIR = @LIBPREFSDIR@
+
+CFLAGS += -I$(top_srcdir)/config -I$(LIBPREFSDIR)/src
+CXXFLAGS += $(CFLAGS)
+LDFLAGS += $(LIBS)
+
+SRCS =	LaunchPadApp.cpp	\
+	LaunchPadWindow.cpp	\
+	LaunchPadView.cpp	\
+	colors.cpp		\
+	DockPane.cpp		\
+	DockItem.cpp		\
+	PrefHandler.cpp		\
+	LTrackerMenu.cpp	\
+	PaletteWindow.cpp	\
+	GUIRowColumn.cpp
+
+RSRCS = LaunchPad_ppc.rsrc
+
+OBJS = $(addsuffix .o, $(foreach file, $(SRCS), $(basename $(notdir $(file)))))
+
+LIBS = $(LIBPREFSDIR)/bigprefs.$(CPU).a -lbe
+
+all:	LaunchPad
+
+depend:
+	$(DEPEND) $(SRCS) $(DEPENDFILTER) > .depend
+
+LaunchPad:	$(OBJS)
+	$(LD) -o $@ $(OBJS) $(LDFLAGS)
+	$(XRES) -o $@ $(RSRCS)
+	setversion $@ -app $(VERSION_MAJOR) $(VERSION_MIDDLE) $(VERSION_MINOR) \
+		$(VERSION_VARIETY) $(VERSION_INTERNAL) \
+		-short $(VERSION_STRING) -long $(VERSION_STRING)
+	$(MIMESET) -f $@
+
+clean:
+	-rm -f $(OBJS) LaunchPad .depend
+
+dist:
+	cp $(SRCS) $(RSRCS) LaunchPad $(top_srcdir)/$(DISTDIR)
+
+-include .depend
