@@ -5,6 +5,8 @@
 #include "LClickFilter.h"
 #include <View.h>	// for B_PRIMARY_MOUSE_BUTTON, etc...
 
+#define PRINT
+
 const uint32 LClickFilter::kDrag			= 'Drag';
 const uint32 LClickFilter::kDoubleClick		= 'DClk';
 const uint32 LClickFilter::kSingleClick		= 'SClk';
@@ -89,19 +91,4 @@ LClickFilter::Filter( BMessage* message, BHandler** target )
 	}
 
 	return B_DISPATCH_MESSAGE;
-}
-
-LMouseTrackingThread::LMouseTrackingThread()
-:	LThread( "LMouseTrackingThread" )
-{
-}
-
-LMouseTrackingThread::~LMouseTrackingThread()
-{
-}
-
-status_t
-LMouseTrackingThread::Main( void )
-{
-	return B_NO_ERROR;
 }
