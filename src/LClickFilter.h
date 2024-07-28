@@ -5,7 +5,6 @@
 #define _L_CLICK_FILTER_H
 
 #include <MessageFilter.h>
-#include "LThread.h"
 
 class LClickFilter : public BMessageFilter
 {
@@ -25,18 +24,6 @@ private:
 	BHandler*				mAssociatedTarget;
 	bigtime_t				mLastMouseDown;
 	uint32					mLastMouseButton;
-};
-
-class LMouseTrackingThread : public LThread
-{
-public:
-							LMouseTrackingThread();
-	virtual					~LMouseTrackingThread();
-	virtual status_t		Main( void );
-
-protected:
-
-private:
 };
 
 #endif // _L_CLICK_FILTER_H
