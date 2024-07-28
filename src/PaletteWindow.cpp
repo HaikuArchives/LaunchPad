@@ -179,6 +179,9 @@ WindowTab::Draw( BRect )
 void
 WindowTab::GetPreferredSize( float *w, float *h )
 {
+	if (Window() == NULL)
+		return;
+
 	if ( Orientation() == B_HORIZONTAL )
 	{
 		*w = (Window()->Bounds()).Width();
